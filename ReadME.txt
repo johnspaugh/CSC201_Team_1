@@ -3,4 +3,3 @@ Team Members:
 	John Spaugh
 	Taro Kumagai
 	Niravkumar Tandel (nickname: Nirav)
-
