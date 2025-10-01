@@ -19,20 +19,18 @@ datatype Expression = Var of Variable |
 			BC of Boolean_Constant |
 			EEO of Expression * Expression * Operator;
 
-(* John Note: it is failing below, anybody know how to fix it? *)
 
+datatype Instruction = Skip | 
+			VE of(Variable * Expression) | 
+			EII of(Expression * Instruction * Instruction) |
+            EI of(Expression * Instruction) | 
+			Seq of Instruction list;
 
-(* replaced Skip with Empty *)
-datatype Instruction = Empty |
-			VE of Variable * Expression |
-			EII of Expression * Instruction * Instruction |
-			EI of Expression * Instruction |
-			IList of Instruction * ;
 
 datatype Type = TypeName1Bool | TypeName2Int ;
 
 type Declaration = Variable * Type;
-type DeclarationList = Declaration *; 
+type DeclarationList = Declaration ; (* * *) 
 
 type Program = DeclarationList * Instruction;
 

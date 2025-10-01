@@ -14,6 +14,14 @@ datatype Expression
   | EEO of Expression * Expression * Operator
   | IC of Integer_Constant
   | Var of Variable
-stdIn:30.27-32.9 Error: syntax error: deleting  SEMICOLON DATATYPE
-stdIn:32.15 Error: syntax error found at EQUALOP
-- 
+datatype Instruction
+  = EI of Expression * Instruction
+  | EII of Expression * Instruction * Instruction
+  | Seq of Instruction list
+  | Skip
+  | VE of Variable * Expression
+datatype Type = TypeName1Bool | TypeName2Int
+type Declaration = Variable * Type
+type DeclarationList = Declaration
+type Program = DeclarationList * Instruction
+
