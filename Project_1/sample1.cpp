@@ -43,3 +43,38 @@ PROGRAM lucas
  
 } 
 */
+#include <cstdlib>
+#include <iomanip>
+#include <iostream>
+
+int main(){ //int argc, char *argv[]){
+     int n;
+     int cur;
+     int prev1;
+     int prev2;
+     int i;
+     int answer;
+
+     n=15;
+
+     if(n == 0){
+          answer =2;
+     }else{
+          i=1;
+          if(n ==1){
+               answer=1;
+          }else{
+               prev2 =2;
+               prev1 =1;
+               while (i < n){
+                    i++; // i = i +1;
+                    cur = prev1 + prev2;
+                    prev2 = prev1;
+                    prev1 = cur;
+               }
+               answer = cur;
+          }
+     }
+     std::cout << "Answer: " << answer << std::endl;
+     return 0;
+}

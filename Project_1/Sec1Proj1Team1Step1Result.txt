@@ -1,0 +1,19 @@
+Standard ML of New Jersey [Version 110.99.8; 32-bit; April 25, 2025]
+- datatype Integer_Constant = Z
+datatype Boolean_Constant = B
+datatype Variable = S of string
+datatype Arithmatic_Op = Div | Minus | Plus | Times
+datatype Relational_Op = Eq | Ge | Gt | Le | Lt | Ne
+datatype Boolean_Op = And | Or
+datatype Operator
+  = AOp of Arithmatic_Op
+  | BOp of Boolean_Op
+  | ROp of Relational_Op
+datatype Expression
+  = BC of Boolean_Constant
+  | EEO of Expression * Expression * Operator
+  | IC of Integer_Constant
+  | Var of Variable
+stdIn:30.27-32.9 Error: syntax error: deleting  SEMICOLON DATATYPE
+stdIn:32.15 Error: syntax error found at EQUALOP
+- 
