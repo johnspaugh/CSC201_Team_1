@@ -30,7 +30,7 @@ datatype Instruction = Skip |
 datatype Type = TypeName1Bool | TypeName2Int ;
 
 type Declaration = Variable * Type;
-type DeclarationList = Declaration ; (* * *) 
+type DeclarationList = Declaration list;  
 
 type Program = DeclarationList * Instruction;
 
