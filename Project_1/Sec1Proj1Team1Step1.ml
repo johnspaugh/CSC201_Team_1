@@ -5,8 +5,8 @@
 (*---- Sec1Proj1Team1Step1 ----------------------*)
 (* Abastract Grammar of a Graal-like Language in BNF for Project *)
 
-datatype Integer_Constant = Z;
-datatype Boolean_Constant = B;
+type Integer_Constant =  int;
+type Boolean_Constant = bool;
 datatype Variable = S of string;
 
 datatype Arithmatic_Op = Plus | Minus | Times | Div;
@@ -22,8 +22,8 @@ datatype Expression = Var of Variable |
 
 datatype Instruction = Skip | 
 			VE of(Variable * Expression) | 
-			EII of(Expression * Instruction * Instruction) |
-            EI of(Expression * Instruction) | 
+			IfThenElse of(Expression * Instruction * Instruction) |
+            WhileLoop of(Expression * Instruction) | 
 			Seq of Instruction list;
 
 
@@ -34,4 +34,43 @@ type DeclarationList = Declaration list;
 
 type Program = DeclarationList * Instruction;
 
-(* ----------------------------------------------*)
+(* -------------------
+cpp file
+
+#include <cstdlib>
+#include <iomanip>
+#include <iostream>
+
+int main(){ //int argc, char *argv[]){
+     int n;
+     int cur;
+     int prev1;
+     int prev2;
+     int i;
+     int answer;
+
+     n=15;
+
+     if(n == 0){
+          answer =2;
+     }else{
+          i=1;
+          if(n ==1){
+               answer=1;
+          }else{
+               prev2 =2;
+               prev1 =1;
+               while (i < n){
+                    i++; // i = i +1;
+                    cur = prev1 + prev2;
+                    prev2 = prev1;
+                    prev1 = cur;
+               }
+               answer = cur;
+          }
+     }
+     std::cout << "Answer: " << answer << std::endl;
+     return 0;
+}
+
+---------------------------*)

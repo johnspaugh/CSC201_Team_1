@@ -1,6 +1,6 @@
 Standard ML of New Jersey [Version 110.99.8; 32-bit; April 25, 2025]
-- datatype Integer_Constant = Z
-datatype Boolean_Constant = B
+- type Integer_Constant = int
+type Boolean_Constant = bool
 datatype Variable = S of string
 datatype Arithmatic_Op = Div | Minus | Plus | Times
 datatype Relational_Op = Eq | Ge | Gt | Le | Lt | Ne
@@ -10,16 +10,16 @@ datatype Operator
   | BOp of Boolean_Op
   | ROp of Relational_Op
 datatype Expression
-  = BC of Boolean_Constant
+  = BC of bool
   | EEO of Expression * Expression * Operator
-  | IC of Integer_Constant
+  | IC of int
   | Var of Variable
 datatype Instruction
-  = EI of Expression * Instruction
-  | EII of Expression * Instruction * Instruction
+  = IfThenElse of Expression * Instruction * Instruction
   | Seq of Instruction list
   | Skip
   | VE of Variable * Expression
+  | WhileLoop of Expression * Instruction
 datatype Type = TypeName1Bool | TypeName2Int
 type Declaration = Variable * Type
 type DeclarationList = Declaration list
