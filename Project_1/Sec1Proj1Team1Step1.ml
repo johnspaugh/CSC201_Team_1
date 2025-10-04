@@ -75,7 +75,7 @@ val assign_answer_1     = VE (var_answer, IC 1)             (* answer = 1 *)
 val assign_answer_2     = VE (var_answer, IC 2)             (* answer = 2 *)
 val assign_i_1          = VE (var_i, IC 1)                  (* i = 1 *)
 val assign_prev1_1      = VE (var_prev1, IC 1)              (* prev1 = 1 *)
-val assign_prev2_2      = VE (var_prev2, IC 2)              (* prev1 = 2 *)
+val assign_prev2_2      = VE (var_prev2, IC 2)              (* prev2 = 2 *)
 val assign_answer_cur   = VE (var_answer, Var var_cur)      (* answer = cur *)
 val assign_prev2_prev1  = VE (var_prev2, Var var_prev1)     (* prev2 = prev1 *)
 val assign_prev1_cur    = VE (var_prev1, Var var_cur)       (* prev1 = cur*)
@@ -120,7 +120,7 @@ val allInstructions = [assign_n_15, outer_ifThenElse]
 
 
 (* The Program LUCAS*)
-val lucas = (allDeclarations, allInstructions)
+val lucas = (allDeclarations, Seq allInstructions)
 
 
 (* -------------------

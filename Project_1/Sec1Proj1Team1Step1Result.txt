@@ -117,9 +117,10 @@ val allInstructions =
 val lucas =
   ([(S "n",TypeInt),(S "cur",TypeInt),(S "prev1",TypeInt),(S "prev2",TypeInt),
     (S "i",TypeInt),(S "answer",TypeInt)],
-   [VE (S "n",IC 15),
-    IfThenElse
-      (EEO (Var (S "n"),IC 0,ROp Eq),VE (S "answer",IC 2),
-       Seq [VE (S "i",IC 1),IfThenElse (EEO (#,#,#),VE (#,#),Seq [#,#,#,#])])])
-  : (Variable * Type) list * Instruction list
+   Seq
+     [VE (S "n",IC 15),
+      IfThenElse
+        (EEO (Var (S "n"),IC 0,ROp Eq),VE (S "answer",IC 2),
+         Seq [VE (S #,IC #),IfThenElse (EEO #,VE #,Seq #)])])
+  : (Variable * Type) list * Instruction
 
