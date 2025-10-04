@@ -93,12 +93,31 @@ val cur_prev1_plus_prev2 = VE (var_cur, add_prev1_prev2)    (* cur = prev1 + pre
 
 
 (* Instructions *)
-val insideWhile = [ipp, cur_prev1_plus_prev2, assign_prev2_prev1, assign_prev1_cur]
+val insideWhile = [
+    ipp, 
+    cur_prev1_plus_prev2, 
+    assign_prev2_prev1, 
+    assign_prev1_cur
+    ]
+    
 val whileLoop = WhileLoop(i_lessthan_n, Seq insideWhile) 
-val inner_Else = [assign_prev2_2, assign_prev1_1, whileLoop, assign_answer_cur]
+
+val inner_Else = [
+    assign_prev2_2, 
+    assign_prev1_1, 
+    whileLoop, 
+    assign_answer_cur
+    ]
+    
 val inner_ifThenElse = IfThenElse(n_equals_1, assign_answer_1, Seq inner_Else)   
-val outer_Else = [assign_i_1, inner_ifThenElse]
+
+val outer_Else = [
+    assign_i_1, 
+    inner_ifThenElse
+    ]
+    
 val outer_ifThenElse = IfThenElse(n_equals_0, assign_answer_2, Seq outer_Else)  
+
 val allInstructions = [assign_n_15, outer_ifThenElse]
 
 
