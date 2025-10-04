@@ -22,9 +22,9 @@ datatype Expression = Var of Variable |
 
 
 datatype Instruction = Skip | 
-            VE of(Variable * Expression) | 
-            IfThenElse of(Expression * Instruction * Instruction) |
-            WhileLoop of(Expression * Instruction) | 
+            VE of (Variable * Expression) | 
+            IfThenElse of (Expression * Instruction * Instruction) |
+            WhileLoop of (Expression * Instruction) | 
             Seq of Instruction list;
 
 
@@ -78,7 +78,7 @@ val assign_prev1_1      = VE (var_prev1, IC 1)              (* prev1 = 1 *)
 val assign_prev2_2      = VE (var_prev2, IC 2)              (* prev1 = 2 *)
 val assign_answer_cur   = VE (var_answer, Var var_cur)      (* answer = cur *)
 val assign_prev2_prev1  = VE (var_prev2, Var var_prev1)     (* prev2 = prev1 *)
-val assign_prev1_cur  = VE (var_prev1, Var var_cur)         (* prev2 = prev1*)
+val assign_prev1_cur    = VE (var_prev1, Var var_cur)       (* prev1 = cur*)
 
 
 (* Arithmatic Expressions *)
@@ -88,8 +88,6 @@ val add_prev1_prev2 = EEO (Var var_prev1, Var var_prev2, AOp Plus)  (* prev1 + p
 (* Arithmatic Instructions *)
 val ipp =  VE (var_i, add_i_1)                              (* i++ *)
 val cur_prev1_plus_prev2 = VE (var_cur, add_prev1_prev2)    (* cur = prev1 + prev2 *)
-
-(* Inside the while loop*)
 
 
 (* Instructions *)
@@ -122,7 +120,7 @@ val allInstructions = [assign_n_15, outer_ifThenElse]
 
 
 (* The Program LUCAS*)
-val program = (allDeclarations, allInstructions)
+val lucas = (allDeclarations, allInstructions)
 
 
 (* -------------------

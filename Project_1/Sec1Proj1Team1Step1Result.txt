@@ -114,7 +114,7 @@ val allInstructions =
          IfThenElse
            (EEO (Var #,IC #,ROp #),VE (S #,IC #),
             Seq [VE #,VE #,WhileLoop #,VE #])])] : Instruction list
-val program =
+val lucas =
   ([(S "n",TypeInt),(S "cur",TypeInt),(S "prev1",TypeInt),(S "prev2",TypeInt),
     (S "i",TypeInt),(S "answer",TypeInt)],
    [VE (S "n",IC 15),
