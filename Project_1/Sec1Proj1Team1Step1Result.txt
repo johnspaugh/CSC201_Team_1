@@ -24,4 +24,67 @@ datatype Type = TypeName1Bool | TypeName2Int
 type Declaration = Variable * Type
 type DeclarationList = Declaration list
 type Program = DeclarationList * Instruction
-
+val var_n = S "n" : Variable
+val var_cur = S "cur" : Variable
+val var_prev1 = S "prev1" : Variable
+val var_prev2 = S "prev2" : Variable
+val var_i = S "i" : Variable
+val var_answer = S "answer" : Variable
+val declaration_n = (S "n",TypeName2Int) : Variable * Type
+val declaration_cur = (S "cur",TypeName2Int) : Variable * Type
+val declaration_prev1 = (S "prev1",TypeName2Int) : Variable * Type
+val declaration_prev2 = (S "prev2",TypeName2Int) : Variable * Type
+val declaration_i = (S "i",TypeName2Int) : Variable * Type
+val declaration_answer = (S "answer",TypeName2Int) : Variable * Type
+val all_declarationList =
+  [(S "n",TypeName2Int),(S "cur",TypeName2Int),(S "prev1",TypeName2Int),
+   (S "prev2",TypeName2Int),(S "i",TypeName2Int),(S "answer",TypeName2Int)]
+  : (Variable * Type) list
+val n_assign_15 = VE (S "n",IC 15) : Instruction
+val isequal = Eq : Relational_Op
+val O_equal = ROp Eq : Operator
+val exp_isEqual0 = EEO (Var (S "n"),IC 0,ROp Eq) : Expression
+val Assign_answer = VE (S "answer",IC 2) : Instruction
+val Assign_i = VE (S "answer",IC 1) : Instruction
+val isequal1 = Eq : Relational_Op
+val O_equal1 = ROp Eq : Operator
+val exp_isEqual1 = EEO (Var (S "n"),IC 1,ROp Eq) : Expression
+val Assign_answer_1 = VE (S "answer",IC 1) : Instruction
+val Assign_prev2_2 = VE (S "prev2",IC 2) : Instruction
+val Assign_prev1_1 = VE (S "prev1",IC 1) : Instruction
+val islessthan = Lt : Relational_Op
+val O_less = ROp Lt : Operator
+val iLessthenN = EEO (Var (S "i"),Var (S "n"),ROp Lt) : Expression
+val add = Plus : Arithmatic_Op
+val O_add = AOp Plus : Operator
+val expr_iplusplus = EEO (Var (S "i"),IC 1,AOp Plus) : Expression
+val Instruction_iplusplus = VE (S "i",EEO (Var (S "i"),IC 1,AOp Plus))
+  : Instruction
+val expr_cur_p1ADDp2 = EEO (Var (S "prev1"),Var (S "prev2"),AOp Plus)
+  : Expression
+val Instruction_cur =
+  VE (S "cur",EEO (Var (S "prev1"),Var (S "prev2"),AOp Plus)) : Instruction
+val expr_var_prev1 = Var (S "prev1") : Expression
+val Instruction_prev1 = VE (S "prev2",Var (S "prev1")) : Instruction
+val expr_var_cur = Var (S "cur") : Expression
+val Instruction_var_cur = VE (S "prev1",Var (S "cur")) : Instruction
+val whileInstruction =
+  Seq
+    [VE (S "i",EEO (Var (S "i"),IC 1,AOp Plus)),
+     VE (S "cur",EEO (Var (S "prev1"),Var (S "prev2"),AOp Plus)),
+     VE (S "prev2",Var (S "prev1")),VE (S "prev1",Var (S "cur"))]
+  : Instruction
+val instuction_while =
+  (EEO (Var (S "i"),Var (S "n"),ROp Lt),
+   Seq
+     [VE (S "i",EEO (Var (S "i"),IC 1,AOp Plus)),
+      VE (S "cur",EEO (Var (S "prev1"),Var (S "prev2"),AOp Plus)),
+      VE (S "prev2",Var (S "prev1")),VE (S "prev1",Var (S "cur"))])
+  : Expression * Instruction
+val var_var_cur = Var (S "cur") : Expression
+stdIn:116.5-116.54 Error: operator and operand do not agree [tycon mismatch]
+  operator domain: Variable * Expression
+  operand:         Variable * Variable
+  in expression:
+    VE (var_answer,var_cur)
+- 
