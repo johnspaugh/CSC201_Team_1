@@ -75,16 +75,57 @@ val whileInstruction =
      VE (S "prev2",Var (S "prev1")),VE (S "prev1",Var (S "cur"))]
   : Instruction
 val instuction_while =
-  (EEO (Var (S "i"),Var (S "n"),ROp Lt),
+  WhileLoop
+    (EEO (Var (S "i"),Var (S "n"),ROp Lt),
+     Seq
+       [VE (S "i",EEO (Var (S #),IC 1,AOp Plus)),
+        VE (S "cur",EEO (Var (S #),Var (S #),AOp Plus)),
+        VE (S "prev2",Var (S "prev1")),VE (S "prev1",Var (S "cur"))])
+  : Instruction
+val var_cur_expr = Var (S "cur") : Expression
+val Instruction_answer_cur = VE (S "answer",Var (S "cur")) : Instruction
+val elseInstruction =
+  Seq
+    [VE (S "prev2",IC 2),VE (S "prev1",IC 1),
+     Seq
+       [VE (S "i",EEO (Var (S #),IC 1,AOp Plus)),
+        VE (S "cur",EEO (Var (S #),Var (S #),AOp Plus)),
+        VE (S "prev2",Var (S "prev1")),VE (S "prev1",Var (S "cur"))],
+     VE (S "answer",Var (S "cur"))] : Instruction
+val Instruction_else =
+  IfThenElse
+    (EEO (Var (S "n"),IC 1,ROp Eq),VE (S "answer",IC 1),
+     Seq
+       [VE (S "prev2",IC 2),VE (S "prev1",IC 1),
+        Seq
+          [VE (S "i",EEO (#,#,#)),VE (S "cur",EEO (#,#,#)),
+           VE (S "prev2",Var (S #)),VE (S "prev1",Var (S #))],
+        VE (S "answer",Var (S "cur"))]) : Instruction
+val Instruction_ifthenelse =
+  IfThenElse
+    (EEO (Var (S "n"),IC 0,ROp Eq),VE (S "answer",IC 2),
+     IfThenElse
+       (EEO (Var (S "n"),IC 1,ROp Eq),VE (S "answer",IC 1),
+        Seq
+          [VE (S "prev2",IC 2),VE (S "prev1",IC 1),
+           Seq [VE (#,#),VE (#,#),VE (#,#),VE (#,#)],
+           VE (S "answer",Var (S #))])) : Instruction
+val all_instructions =
+  Seq
+    [VE (S "n",IC 15),
+     IfThenElse
+       (EEO (Var (S "n"),IC 0,ROp Eq),VE (S "answer",IC 2),
+        IfThenElse
+          (EEO (Var (S #),IC 1,ROp Eq),VE (S "answer",IC 1),
+           Seq [VE (#,#),VE (#,#),Seq [#,#,#,#],VE (#,#)]))] : Instruction
+val Program_Lucus =
+  ([(S "n",TypeName2Int),(S "cur",TypeName2Int),(S "prev1",TypeName2Int),
+    (S "prev2",TypeName2Int),(S "i",TypeName2Int),(S "answer",TypeName2Int)],
    Seq
-     [VE (S "i",EEO (Var (S "i"),IC 1,AOp Plus)),
-      VE (S "cur",EEO (Var (S "prev1"),Var (S "prev2"),AOp Plus)),
-      VE (S "prev2",Var (S "prev1")),VE (S "prev1",Var (S "cur"))])
-  : Expression * Instruction
-val var_var_cur = Var (S "cur") : Expression
-stdIn:116.5-116.54 Error: operator and operand do not agree [tycon mismatch]
-  operator domain: Variable * Expression
-  operand:         Variable * Variable
-  in expression:
-    VE (var_answer,var_cur)
+     [VE (S "n",IC 15),
+      IfThenElse
+        (EEO (Var (S "n"),IC 0,ROp Eq),VE (S "answer",IC 2),
+         IfThenElse
+           (EEO (Var #,IC #,ROp #),VE (S #,IC #),Seq [VE #,VE #,Seq #,VE #]))])
+  : (Variable * Type) list * Instruction
 - 

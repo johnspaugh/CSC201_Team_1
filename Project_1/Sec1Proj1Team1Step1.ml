@@ -112,8 +112,8 @@ val whileInstruction = Seq [
 ];
 
 val instuction_while = WhileLoop ( iLessthenN, whileInstruction);
-val var_var_cur = Var var_cur;
-val Instruction_answer_cur = VE (var_answer, var_cur);
+val var_cur_expr = Var var_cur;
+val Instruction_answer_cur = VE (var_answer, var_cur_expr);
 
 val elseInstruction = Seq [
 	Assign_prev2_2,
@@ -127,7 +127,7 @@ val Instruction_else = IfThenElse ( exp_isEqual1, Assign_answer_1, elseInstructi
 val Instruction_ifthenelse = IfThenElse (exp_isEqual0, Assign_answer, Instruction_else);
 
 val all_instructions = Seq [
-	n_assign,
+	n_assign_15,
 	Instruction_ifthenelse
 ];
 
