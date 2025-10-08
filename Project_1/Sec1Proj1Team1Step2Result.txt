@@ -123,4 +123,66 @@ val lucas =
         (EEO (Var (S "n"),IC 0,ROp Eq),VE (S "answer",IC 2),
          Seq [VE (S #,IC #),IfThenElse (EEO #,VE #,Seq #)])])
   : (Variable * Type) list * Instruction
-
+stdIn:175.43-176.17 Error: syntax error: deleting  RPAREN BAR IDA
+stdIn:179.1-179.8 Error: syntax error: deleting  VAL REC
+stdIn:180.47-180.51 Error: syntax error: deleting  RPAREN DARROW
+stdIn:181.24-181.37 Error: syntax error: deleting  LPAREN IDA RPAREN
+stdIn:182.22-182.35 Error: syntax error: deleting  LPAREN IDA RPAREN
+stdIn:182.35-182.38 Error: syntax error: deleting  LPAREN IDA RPAREN
+stdIn:182.39-183.13 Error: syntax error: deleting  BAR LPAREN LBRACKET
+stdIn:183.13-183.16 Error: syntax error: deleting  RBRACKET RPAREN EQUALOP
+stdIn:183.20-188.9 Error: syntax error: deleting  SEMICOLON DATATYPE
+stdIn:188.20-188.37 Error: syntax error: deleting  EQUALOP IDA BAR
+stdIn:188.50-188.66 Error: syntax error: deleting  BAR IDA BAR
+stdIn:191.21-191.31 Error: syntax error: deleting  EQUALOP IDA
+stdIn:193.23-193.26 Error: syntax error: deleting  COMMA IDA
+stdIn:194.7-194.10 Error: syntax error: deleting  LPAREN IDA RPAREN
+stdIn:194.11-194.14 Error: syntax error: deleting  EQUALOP LPAREN
+stdIn:194.27-194.41 Error: syntax error: deleting  COMMA IDA COMMA
+stdIn:194.54-197.28 Error: syntax error: deleting  RPAREN IDA
+stdIn:198.1-198.34 Error: syntax error: deleting  VAL IDA EQUALOP
+stdIn:199.6-199.11 Error: syntax error: deleting  LPAREN FN LPAREN
+stdIn:199.21-199.25 Error: syntax error: deleting  RPAREN DARROW
+stdIn:199.39-202.18 Error: syntax error: deleting  RPAREN IDA
+stdIn:204.26-204.33 Error: syntax error: deleting  LPAREN IDA
+stdIn:204.49-204.51 Error: syntax error: deleting  RPAREN LPAREN
+stdIn:204.61-204.77 Error: syntax error: deleting  COMMA IDA RPAREN
+stdIn:205.11-205.15 Error: syntax error: deleting  EQUALOP LPAREN FN
+stdIn:205.16-205.18 Error: syntax error: deleting  LPAREN IDA
+stdIn:205.27-205.33 Error: syntax error: deleting  RPAREN DARROW IF
+stdIn:205.35-205.42 Error: syntax error: deleting  EQUALOP IDA THEN
+stdIn:206.41-206.58 Error: syntax error: deleting  ELSE IDA RPAREN
+stdIn:206.59-207.29 Error: syntax error: deleting  BAR IDA LPAREN
+stdIn:207.51-207.53 Error: syntax error: deleting  RPAREN LPAREN
+stdIn:207.63-207.78 Error: syntax error: deleting  COMMA IDA RPAREN
+stdIn:208.11-208.15 Error: syntax error: deleting  EQUALOP LPAREN FN
+stdIn:208.15-208.17 Error: syntax error: deleting  LPAREN IDA
+stdIn:208.26-208.31 Error: syntax error: deleting  RPAREN DARROW IF
+stdIn:208.33-208.40 Error: syntax error: deleting  EQUALOP IDA THEN
+stdIn:209.41-209.53 Error: syntax error: deleting  ELSE IDA LPAREN
+stdIn:209.54-212.4 Error: syntax error: deleting  RPAREN RPAREN VAL
+stdIn:212.23-212.41 Error: syntax error: deleting  EQUALOP IDA LPAREN
+stdIn:212.68-213.24 Error: syntax error: deleting  RPAREN IDA LPAREN
+stdIn:213.28-213.32 Error: syntax error: deleting  IN INT
+stdIn:213.38-214.24 Error: syntax error: deleting  RPAREN IDA LPAREN
+stdIn:214.34-215.4 Error: syntax error: deleting  RPAREN VAL
+stdIn:215.23-215.43 Error: syntax error: deleting  EQUALOP IDA LPAREN
+stdIn:215.60-216.42 Error: syntax error: deleting  RPAREN LPAREN
+stdIn:216.59-217.24 Error: syntax error: deleting  RPAREN IDA LPAREN
+stdIn:217.28-217.32 Error: syntax error: deleting  IN INT
+stdIn:217.39-218.24 Error: syntax error: deleting  RPAREN IDA LPAREN
+stdIn:218.28-218.32 Error: syntax error: deleting  IN INT
+stdIn:218.39-219.24 Error: syntax error: deleting  RPAREN IDA LPAREN
+stdIn:219.34-222.20 Error: syntax error: deleting  RPAREN IDA
+stdIn:224.1-224.8 Error: syntax error: deleting  VAL REC
+stdIn:224.29-225.9 Error: syntax error: deleting  EQUALOP LPAREN FN
+stdIn:225.9-225.11 Error: syntax error: deleting  LPAREN LPAREN
+stdIn:225.36-225.38 Error: syntax error: deleting  RPAREN COLON
+stdIn:225.53-225.56 Error: syntax error: deleting  RPAREN DARROW
+stdIn:226.28-226.49 Error: syntax error: deleting  LPAREN IDA LPAREN
+stdIn:226.60-226.64 Error: syntax error: deleting  RPAREN RPAREN LPAREN
+stdIn:226.75-227.7 Error: syntax error: deleting  RPAREN RPAREN LPAREN
+stdIn:227.7-227.10 Error: syntax error: deleting  LBRACKET RBRACKET RPAREN
+stdIn:230.1-230.21 Error: syntax error: deleting  VAL IDA
+stdIn:231.32-231.37 Error: syntax error: deleting  IN IDA
+- 
