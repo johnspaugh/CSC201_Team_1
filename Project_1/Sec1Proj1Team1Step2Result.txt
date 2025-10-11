@@ -123,5 +123,16 @@ val lucas =
         (EEO (Var (S "n"),IC 0,ROp Eq),VE (S "answer",IC 2),
          Seq [VE (S #,IC #),IfThenElse (EEO #,VE #,Seq #)])])
   : (Variable * Type) list * Instruction
-stdIn:234.6-234.10 Error: syntax error: deleting  BAR LBRACKET RBRACKET
-- 
+= stdIn:211.33 Warning: calling polyEqual
+stdIn:214.32 Warning: calling polyEqual
+stdIn:180.10-180.12 Warning: calling polyEqual
+val NoDuplicate = fn : (Variable * Type) list -> Variable -> bool
+val DecListVCheck = fn : DeclarationList -> bool
+val gtest = true : bool
+datatype TypeValue = DeclaredBool | DeclaredInt | NoDeclaration
+type AbsTypingTable = Variable -> TypeValue
+val AbsTypingTableNoDeclaration = fn : Variable -> TypeValue
+val NewAbsTypingTable = fn
+  : AbsTypingTable -> Variable * Type -> Variable -> TypeValue
+val wholeAbsTypingTable = fn : DeclarationList -> AbsTypingTable
+

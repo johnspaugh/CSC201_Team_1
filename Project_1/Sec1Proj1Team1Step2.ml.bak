@@ -182,9 +182,15 @@ fun NoDuplicate ((a:Variable, b:Type)::decListTail) (c:Variable) =
 
     
 (* 2. DecListVCheck: DeclarationList --> Bool *)
-fun DecListVCheck ((a,b)::decListTail : DeclarationList) =
+fun DecListVCheck ((a:Variable, b:Type)::decListTail : DeclarationList) =
       DecListVCheck decListTail andalso NoDuplicate decListTail a
   | DecListVCheck [] = true
+
+(*Val rec test*)
+val rec DecListVCheck ((a:Variable, b:Type)::decListTail : DeclarationList) =
+      DecListVCheck decListTail andalso NoDuplicate decListTail a
+  | [] = true
+
 
 val gtest = DecListVCheck allDeclarations
 
@@ -202,16 +208,16 @@ type AbsTypingTable = Variable -> TypeValue
 
 (* 5 *)
 (*AbsTypingTableNoDeclaration: AbsTypingTable*)
-val AbsTypingTableNoDeclaration = (fn (x:variable) => NoDeclaration)
+val AbsTypingTableNoDeclaration = (fn (x:Variable) => NoDeclaration)
 
 (* 6 *)
 (*NewAbsTypingTable: AbsTypingTable --> Declaration --> AbsTypingTable*)
           (* old    new   *)
- fun NewAbsTypingTable (oldatt:AbsTypingTable) (a:Variable, TypeNameBool)
-      =(fn (b:variable)=> if b=a then DeclaredBool
+fun NewAbsTypingTable (oldatt:AbsTypingTable) (a:Variable, TypeBool)
+      =(fn (b:Variable) => if b = a then DeclaredBool
                                     else DeclaredInt) |
-      NewAbsTypingTable (oldatt:AbsTypingTable) (a:Variable, TypeNameInt)
-      =(fn(b:variable)=>if b=a then DeclaredInt
+     NewAbsTypingTable (oldatt:AbsTypingTable) (a:Variable, TypeInt)
+      =(fn(b:Variable) => if b = a then DeclaredInt
                                     else oldatt(b))
 
                     
@@ -228,10 +234,9 @@ val myAbsTypingTable2 = NewAbsTypingTable(myAbsTypingTable1)
 (* 7 *)
 (* wholeAbsTypingTable: DeclarationList --> AbsTypingTable *)
 
-val rec wholeAbsTypingTable =
-     (fn((decListhead::decListTail):DeclarationList) =>
-          NewAbsTypingTable(wholeAbsTypingTable(decListTail)) (decListhead)) 
-     | [] => AbsTypingTableNoDeclaration
+fun wholeAbsTypingTable ((decListHead::decListTail):DeclarationList) =
+    NewAbsTypingTable(wholeAbsTypingTable(decListTail)) (decListHead) 
+    | wholeAbsTypingTable [] = AbsTypingTableNoDeclaration
 
 (* ***Testing *)
 
