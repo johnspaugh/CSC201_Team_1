@@ -169,45 +169,85 @@ int main(){ //int argc, char *argv[]){
 
 (* 1-2 check Validity of DeclarationList
      1. NoDuplicate: DeclarationList --> 
-               variable --> Bool*)
-Fun NoDuplicate ((a: varaibale, b: Type):: decListTail)
+               variable --> Bool
+Fun NoDuplicate ((a: varaibale, b: Type):: decListTail), 
      (c: variable) = 
      (a <> c) ^ NoDuplicate(decListTail)(c) |
-     NoDuplicate([])(c: variable) =true;
+     NoDuplicate([])(c: variable) =true;*)
 
-(* 2. DecListVCheck: DeclarationList --> Bool *)
+fun NoDuplicate ((a: Variable, b: Type):: decListTail)(c: Variable) = 
+     (a <> c) andalso NoDuplicate(decListTail)(c) |
+     NoDuplicate([])(c: Variable) =true;
+
+(* ^ == andalso  *)
+
+(* 2. DecListVCheck: DeclarationList --> Bool 
 val rec DecListVCheck =
-     (fn ((a,b):: decListTail):DeclarationList) =>
+     (fn ( ((a:Variable, b:Type):: decListTail):DeclarationList) =>
           DecListVCheck(decListTail)
           NoDuplicate(decListTail)(a) |
-          ([])=true;
+          ([])=true);*)
+
+val rec DecListVCheck =
+  fn DeclarationList =>
+    case DeclarationList of
+        (a: Variable, b: Type)::decListTail =>
+            DecListVCheck decListTail andalso NoDuplicate decListTail a
+      | [] => true;
+
+(*Good testing step 2, input allDeclarations into DecListVCheck
+val test1 = NoDuplicate(allDeclarations )(var_answer); *)
+val Gtest1 = DecListVCheck(allDeclarations);
+
+(* Bad testing step 2, input a list that is not a declarationlist into DecListVCheck 
+*)
+val Btest1 = DecListVCheck(insideWhile);
 
 (* 3-7 : DeclarationList --> AbsTypingTable *)
 
-(* 3 *)
-datatype TypeValue = NoDeclaration | DeclaredInt | DeclaredBool |
+(* 3 datatype TypeValue = NoDeclaration | DeclaredInt | DeclaredBool |
+*)
+datatype TypeValue = NoDeclaration | DeclaredInt | DeclaredBool ;
 
-(* 4 *)
-Type AbsTypingTable = variable --> TypeValue
+
+(* 4 Type AbsTypingTable = variable --> TypeValue
      (* functionType *)
      x: AbsTypingTable, y:variable
      x(y) = (NoDeclaration, DeclaredInt, DeclaredBool)
+*)
 
-(* 5 *)
+     x: AbsTypingTable, y:Variable
+     x(y) = (NoDeclaration, DeclaredInt, DeclaredBool)
+
+(* 5 
 AbsTypingTableNoDeclaration: AbsTypingTable
 val AbsTypingTableNoDeclaration =
-     (fn (x:variable) => NoDeclaration)
+     (fn (x:variable) => NoDeclaration)*)
 
-(* 6 *)
+AbsTypingTableNoDeclaration: AbsTypingTable
+val AbsTypingTableNoDeclaration =
+     (fn (x:Variable) => NoDeclaration)
+
+(* ***Testing  no [] declaretion all apply*)
+
+
+(* 6 
 NewAbsTypingTable: AbsTypingTable --> Declaration --> AbsTypingTable
           (* old    new   *)
      funNewAbsTypingTable(oldatt: AbsTypingTable)(a:variable, TypeName1Bool)
           =(fn (b:variable)=> if b=a then DeclaredBool
                                         else DeclaredInt) |
           NewAbsTypingTable(oldatt: AbsTypingTable)(a:variable, TypeName2Int)
-          =(fn(b:variable)=>if b=a then DeclaredInt
-                                        else oldatt(b))
+          =(fn(b:variable)=> if b=a then DeclaredInt
+                                        else oldatt(b))*)
                     
+fun NewAbsTypingTable(oldatt: AbsTypingTable)(a:Variable, TypeName1Bool)
+     =(fn (b:Variable)=> if b=a then DeclaredBool
+                                   else DeclaredInt) |
+     NewAbsTypingTable(oldatt: AbsTypingTable)(a:Variable, TypeName2Int)
+     =(fn(b:Variable)=> if b=a then DeclaredInt
+                                   else oldatt(b))
+
 (* ****Testing step2 *)
 val myAbsTypingTable1 = NewAbsTypeTable(AbsTypingTableNoDeclaration)
      myAbsTypingTable1(var in 1st dec)
@@ -218,8 +258,15 @@ val myAbsTypingTable2 = NewAbsTypingTable(myAbsTypingTable1)
      myAbsTypingTable2(var in 2nd dec )
      myAbsTypingTable2(other rows)
 
-(* 7 *)
+
+
+(* 7 
 wholeAbsTypingTable: DeclarationList --> AbsTypingTable
+
+val rec wholeAbsTypingTable =
+     (fn((decListhead:: decListTail):DeclarationList)=>
+          NewAbsTypingTable(wholeAbsTypingTable(decListTail)) (decListhead))
+     ([]) => AbsTypingTableNoDeclaration*)
 
 val rec wholeAbsTypingTable =
      (fn((decListhead:: decListTail):DeclarationList)=>
