@@ -228,11 +228,13 @@ val myAbsTypingTable2 = NewAbsTypingTable(myAbsTypingTable1)
 (* 7 *)
 (* wholeAbsTypingTable: DeclarationList --> AbsTypingTable *)
 
-val rec WholeAbsTypingTable = fn((decListHead::decListTail)) =>
-    NewAbsTypingTable(WholeAbsTypingTable(decListTail)) NewAbsTypingTable(WholeAbsTypingTable(decListHead))|
-    [] => AbsTypingTableNoDeclaration
+val rec wholeAbsTypingTable =
+  fn (decListHead :: decListTail : DeclarationList) =>
+       NewAbsTypingTable (wholeAbsTypingTable decListTail) decListHead
+   | [] => AbsTypingTableNoDeclaration
 
-    
+
+
 (* ***Testing *)
 
     
