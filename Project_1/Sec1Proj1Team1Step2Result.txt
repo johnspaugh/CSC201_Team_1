@@ -123,16 +123,17 @@ val lucas =
         (EEO (Var (S "n"),IC 0,ROp Eq),VE (S "answer",IC 2),
          Seq [VE (S #,IC #),IfThenElse (EEO #,VE #,Seq #)])])
   : (Variable * Type) list * Instruction
-stdIn:179.9-179.11 Warning: calling polyEqual
+stdIn:180.9-180.11 Warning: calling polyEqual
 val NoDuplicate = fn : (Variable * Type) list -> Variable -> bool
-val DecListVCheck = fn : (Variable * Type) list -> bool
+val DecListVCheck = fn : DeclarationList -> bool
 val Gtest1 = true : bool
-stdIn:204.5-204.40 Error: operator and operand do not agree [tycon mismatch]
-  operator domain: (Variable * Type) list
-  operand:         Instruction list
-  in expression:
-    DecListVCheck insideWhile
-- stdIn:216.1-216.8 Error: syntax error: deleting  VAL REC
-stdIn:219.11-222.4 Error: syntax error: deleting  DARROW IDA VAL
-stdIn:223.32-223.37 Error: syntax error: deleting  IN IDA
+datatype TypeValue = DeclaredBool | DeclaredInt | NoDeclaration
+type AbsTypingTable = Variable -> TypeValue
+val AbsTypingTableNoDeclaration = fn : Variable -> TypeValue
+val Gtest5_1 = NoDeclaration : TypeValue
+stdIn:263.30 Warning: calling polyEqual
+stdIn:266.29 Warning: calling polyEqual
+val NewAbsTypingTable = fn
+  : AbsTypingTable -> Variable * Type -> Variable -> TypeValue
+val wholeAbsTypingTable = fn : DeclarationList -> AbsTypingTable
 - 

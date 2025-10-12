@@ -168,12 +168,13 @@ int main(){ //int argc, char *argv[]){
 (* sml<Sec1Proj1Team1Step2.ml>Sec1Proj1Team1Step2Result.txt   *)
 
 (* 1-2 check Validity of DeclarationList
-     1. NoDuplicate: DeclarationList --> 
-               variable --> Bool
-Fun NoDuplicate ((a: varaibale, b: Type):: decListTail), 
-     (c: variable) = 
-     (a <> c) ^ NoDuplicate(decListTail)(c) |
-     NoDuplicate([])(c: variable) =true;*)
+     1. NoDuplicate: DeclarationList -> 
+               variable -> Bool
+     Fun NoDuplicate ((a: varaibale, b: Type):: decListTail), 
+          (c: variable) = 
+          (a <> c) ^ NoDuplicate(decListTail)(c) |
+          NoDuplicate([])(c: variable) =true;
+*)
 
 fun NoDuplicate ((a: Variable, b: Type):: decListTail)(c: Variable) = 
      (a <> c) andalso NoDuplicate(decListTail)(c) |
@@ -181,74 +182,91 @@ fun NoDuplicate ((a: Variable, b: Type):: decListTail)(c: Variable) =
 
 (* ^ == andalso  *)
 
-(* 2. DecListVCheck: DeclarationList --> Bool 
+(* 2. DecListVCheck: DeclarationList -> Bool 
 val rec DecListVCheck =
      (fn ( ((a:Variable, b:Type):: decListTail):DeclarationList) =>
-          DecListVCheck(decListTail)
+          DecListVCheck(decListTail) andalso
           NoDuplicate(decListTail)(a) |
-          ([])=true);*)
+          ([])=true);  
 
+fun DecListVCheck ((a:Variable, b:Type)::decListTail : DeclarationList) =
+     DecListVCheck( decListTail) andalso NoDuplicate( decListTail)( a )
+     | DecListVCheck( []) = true ;
+*)
+(*
 val rec DecListVCheck =
   fn DeclarationList =>
     case DeclarationList of
         (a: Variable, b: Type)::decListTail =>
             DecListVCheck decListTail andalso NoDuplicate decListTail a
       | [] => true;
+*)
+
+
+val rec DecListVCheck =
+     (fn ( ((a: Variable, b: Type):: decListTail):DeclarationList) =>
+          DecListVCheck(decListTail) andalso
+          NoDuplicate(decListTail)(a) |
+          ([]) => true  
+     ) ;
 
 (*Good testing step 2, input allDeclarations into DecListVCheck
 val test1 = NoDuplicate(allDeclarations )(var_answer); *)
 val Gtest1 = DecListVCheck(allDeclarations);
 
 (* Bad testing step 2, input a list that is not a declarationlist into DecListVCheck 
-*)
-val Btest1 = DecListVCheck(insideWhile);
 
-(* 3-7 : DeclarationList --> AbsTypingTable *)
+val var_bb  = S "bb";
+val declaration_bb      = (var_n, TypeBool);
+val Btest1 = DecListVCheck(declaration_bb);
+*)
+
+(* 3-7 : DeclarationList -> AbsTypingTable *)
 
 (* 3 datatype TypeValue = NoDeclaration | DeclaredInt | DeclaredBool |
 *)
 datatype TypeValue = NoDeclaration | DeclaredInt | DeclaredBool ;
 
 
-(* 4 Type AbsTypingTable = variable --> TypeValue
+(* 4 Type AbsTypingTable = variable -> TypeValue
      (* functionType *)
      x: AbsTypingTable, y:variable
      x(y) = (NoDeclaration, DeclaredInt, DeclaredBool)
 *)
-
-     x: AbsTypingTable, y:Variable
-     x(y) = (NoDeclaration, DeclaredInt, DeclaredBool)
+type AbsTypingTable = Variable -> TypeValue 
 
 (* 5 
 AbsTypingTableNoDeclaration: AbsTypingTable
 val AbsTypingTableNoDeclaration =
      (fn (x:variable) => NoDeclaration)*)
 
-AbsTypingTableNoDeclaration: AbsTypingTable
-val AbsTypingTableNoDeclaration =
-     (fn (x:Variable) => NoDeclaration)
-
-(* ***Testing  no [] declaretion all apply*)
+val AbsTypingTableNoDeclaration = (fn (x:Variable) => NoDeclaration)    
 
 
-(* 6 
-NewAbsTypingTable: AbsTypingTable --> Declaration --> AbsTypingTable
-          (* old    new   *)
+(* ***Testing 5 one apply for variables for the declaration of all apply *)
+val Gtest5_1 = AbsTypingTableNoDeclaration(var_answer);
+(* bad test 5, 
+val Gtest5_2 = AbsTypingTableNoDeclaration( declaration_answer );
+*)
+
+(* 6 NewAbsTypingTable: AbsTypingTable -> Declaration -> AbsTypingTable
+     note-----------------------old                            new----------
      funNewAbsTypingTable(oldatt: AbsTypingTable)(a:variable, TypeName1Bool)
           =(fn (b:variable)=> if b=a then DeclaredBool
                                         else DeclaredInt) |
           NewAbsTypingTable(oldatt: AbsTypingTable)(a:variable, TypeName2Int)
           =(fn(b:variable)=> if b=a then DeclaredInt
-                                        else oldatt(b))*)
+                                        else oldatt(b))
+*)
                     
-fun NewAbsTypingTable(oldatt: AbsTypingTable)(a:Variable, TypeName1Bool)
+fun NewAbsTypingTable(oldatt: AbsTypingTable)(a:Variable, TypeBool)
      =(fn (b:Variable)=> if b=a then DeclaredBool
                                    else DeclaredInt) |
-     NewAbsTypingTable(oldatt: AbsTypingTable)(a:Variable, TypeName2Int)
+     NewAbsTypingTable(oldatt: AbsTypingTable)(a:Variable, TypeInt)
      =(fn(b:Variable)=> if b=a then DeclaredInt
                                    else oldatt(b))
 
-(* ****Testing step2 *)
+(* ****Testing part 6  
 val myAbsTypingTable1 = NewAbsTypeTable(AbsTypingTableNoDeclaration)
      myAbsTypingTable1(var in 1st dec)
      myAbsTypingTable1(other rows)
@@ -257,26 +275,26 @@ val myAbsTypingTable2 = NewAbsTypingTable(myAbsTypingTable1)
      myAbsTypingTable2(var in 1st dec )
      myAbsTypingTable2(var in 2nd dec )
      myAbsTypingTable2(other rows)
+*)
 
 
-
-(* 7 
-wholeAbsTypingTable: DeclarationList --> AbsTypingTable
-
-val rec wholeAbsTypingTable =
-     (fn((decListhead:: decListTail):DeclarationList)=>
-          NewAbsTypingTable(wholeAbsTypingTable(decListTail)) (decListhead))
-     ([]) => AbsTypingTableNoDeclaration*)
-
+(* 7 wholeAbsTypingTable: DeclarationList -> AbsTypingTable
 val rec wholeAbsTypingTable =
      (fn((decListhead:: decListTail):DeclarationList)=>
           NewAbsTypingTable(wholeAbsTypingTable(decListTail)) (decListhead))
      ([]) => AbsTypingTableNoDeclaration
+*)
 
-(* ***Testing *)
+val rec wholeAbsTypingTable =
+     (fn ((decListhead:: decListTail):DeclarationList)=>
+          NewAbsTypingTable(wholeAbsTypingTable(decListTail) )(decListhead) |
+          ([]) => AbsTypingTableNoDeclaration
+     );
+
+(* ***Testing part 7
 val myAbsTypingTable = wholeAbsTypingTable(mydecList)
      myAbsTypingTable(each var in my declist)
      myAbsTypingTable(one var not in my declist)
-
+*)
 
 (*------------End step2 static sementics---------------*)
