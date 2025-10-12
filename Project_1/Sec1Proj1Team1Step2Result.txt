@@ -123,16 +123,14 @@ val lucas =
         (EEO (Var (S "n"),IC 0,ROp Eq),VE (S "answer",IC 2),
          Seq [VE (S #,IC #),IfThenElse (EEO #,VE #,Seq #)])])
   : (Variable * Type) list * Instruction
-= stdIn:211.33 Warning: calling polyEqual
-stdIn:214.32 Warning: calling polyEqual
-stdIn:180.10-180.12 Warning: calling polyEqual
-val NoDuplicate = fn : (Variable * Type) list -> Variable -> bool
-val DecListVCheck = fn : DeclarationList -> bool
-val gtest = true : bool
-datatype TypeValue = DeclaredBool | DeclaredInt | NoDeclaration
-type AbsTypingTable = Variable -> TypeValue
-val AbsTypingTableNoDeclaration = fn : Variable -> TypeValue
-val NewAbsTypingTable = fn
-  : AbsTypingTable -> Variable * Type -> Variable -> TypeValue
-val wholeAbsTypingTable = fn : DeclarationList -> AbsTypingTable
-
+= stdIn:232.5-232.108 Error: operator and operand do not agree [tycon mismatch]
+  operator domain: Variable * Type
+  operand:         AbsTypingTable -> Variable * Type -> Variable -> TypeValue
+  in expression:
+    (NewAbsTypingTable (WholeAbsTypingTable decListTail)) NewAbsTypingTable
+stdIn:232.75-232.107 Error: operator and operand do not agree [circularity]
+  operator domain: 'Z list
+  operand:         'Z
+  in expression:
+    WholeAbsTypingTable decListHead
+- 

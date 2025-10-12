@@ -182,15 +182,9 @@ fun NoDuplicate ((a:Variable, b:Type)::decListTail) (c:Variable) =
 
     
 (* 2. DecListVCheck: DeclarationList --> Bool *)
-fun DecListVCheck ((a:Variable, b:Type)::decListTail : DeclarationList) =
-      DecListVCheck decListTail andalso NoDuplicate decListTail a
-  | DecListVCheck [] = true
-
-(*Val rec test*)
-val rec DecListVCheck = (fn ((a:Variable, b:Type)::decListTail : DeclarationList) =>
-      DecListVCheck decListTail andalso NoDuplicate decListTail a)
-  | [] = true
-
+val rec DecListVCheck =  fn ((a:Variable, b:Type)::decListTail) =>
+       DecListVCheck decListTail andalso NoDuplicate (decListTail) (a)
+        | [] => true
 
 val gtest = DecListVCheck allDeclarations
 
@@ -234,10 +228,11 @@ val myAbsTypingTable2 = NewAbsTypingTable(myAbsTypingTable1)
 (* 7 *)
 (* wholeAbsTypingTable: DeclarationList --> AbsTypingTable *)
 
-fun wholeAbsTypingTable ((decListHead::decListTail):DeclarationList) =
-    NewAbsTypingTable(wholeAbsTypingTable(decListTail)) (decListHead) 
-    | wholeAbsTypingTable [] = AbsTypingTableNoDeclaration
+val rec WholeAbsTypingTable = fn(decListHead::decListTail) =>
+    NewAbsTypingTable(WholeAbsTypingTable(decListTail)) NewAbsTypingTable(WholeAbsTypingTable(decListHead))|
+    [] => AbsTypingTableNoDeclaration
 
+    
 (* ***Testing *)
 
     
