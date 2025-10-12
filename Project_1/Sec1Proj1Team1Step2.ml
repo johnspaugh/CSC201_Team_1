@@ -187,13 +187,13 @@ val rec DecListVCheck =
      (fn ( ((a:Variable, b:Type):: decListTail):DeclarationList) =>
           DecListVCheck(decListTail) andalso
           NoDuplicate(decListTail)(a) |
-          ([])=true);  
-
+          ([])=>true);  *)
+(* This was alternative 1 created, but can't be used, not what the Professor asked for in the assignment
 fun DecListVCheck ((a:Variable, b:Type)::decListTail : DeclarationList) =
      DecListVCheck( decListTail) andalso NoDuplicate( decListTail)( a )
      | DecListVCheck( []) = true ;
 *)
-(*
+(* This was alternative 2 created, but can't be used, not what the Professor asked for in the assignment
 val rec DecListVCheck =
   fn DeclarationList =>
     case DeclarationList of
@@ -210,16 +210,19 @@ val rec DecListVCheck =
           ([]) => true  
      ) ;
 
-(*Good testing step 2, input allDeclarations into DecListVCheck
+(*Good testing step 2, input allDeclarations list with int into DecListVCheck
 val test1 = NoDuplicate(allDeclarations )(var_answer); *)
 val Gtest1 = DecListVCheck(allDeclarations);
 
-(* Bad testing step 2, input a list that is not a declarationlist into DecListVCheck 
-
+(* Bad testing step 2, input a duplicate bool declaration list that is not a declarationlist into DecListVCheck 
+*)
 val var_bb  = S "bb";
 val declaration_bb      = (var_n, TypeBool);
-val Btest1 = DecListVCheck(declaration_bb);
-*)
+val declarationslist_bb = [
+    declaration_bb, 
+    declaration_bb ];
+val Btest1 = DecListVCheck(declarationslist_bb);
+
 
 (* 3-7 : DeclarationList -> AbsTypingTable *)
 
@@ -235,8 +238,7 @@ datatype TypeValue = NoDeclaration | DeclaredInt | DeclaredBool ;
 *)
 type AbsTypingTable = Variable -> TypeValue 
 
-(* 5 
-AbsTypingTableNoDeclaration: AbsTypingTable
+(* 5 AbsTypingTableNoDeclaration: AbsTypingTable
 val AbsTypingTableNoDeclaration =
      (fn (x:variable) => NoDeclaration)*)
 

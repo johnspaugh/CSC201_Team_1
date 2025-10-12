@@ -127,12 +127,17 @@ stdIn:180.9-180.11 Warning: calling polyEqual
 val NoDuplicate = fn : (Variable * Type) list -> Variable -> bool
 val DecListVCheck = fn : DeclarationList -> bool
 val Gtest1 = true : bool
+val var_bb = S "bb" : Variable
+val declaration_bb = (S "n",TypeBool) : Variable * Type
+val declarationslist_bb = [(S "n",TypeBool),(S "n",TypeBool)]
+  : (Variable * Type) list
+val Btest1 = false : bool
 datatype TypeValue = DeclaredBool | DeclaredInt | NoDeclaration
 type AbsTypingTable = Variable -> TypeValue
 val AbsTypingTableNoDeclaration = fn : Variable -> TypeValue
 val Gtest5_1 = NoDeclaration : TypeValue
-stdIn:263.30 Warning: calling polyEqual
-stdIn:266.29 Warning: calling polyEqual
+stdIn:265.30 Warning: calling polyEqual
+stdIn:268.29 Warning: calling polyEqual
 val NewAbsTypingTable = fn
   : AbsTypingTable -> Variable * Type -> Variable -> TypeValue
 val wholeAbsTypingTable = fn : DeclarationList -> AbsTypingTable
