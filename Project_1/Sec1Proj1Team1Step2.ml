@@ -247,26 +247,25 @@ val AbsTypingTableNoDeclaration = (fn (x:Variable) => NoDeclaration)
 
 (* ***Testing 5 one apply for variables for the declaration of all apply *)
 val Gtest5_1 = AbsTypingTableNoDeclaration(var_answer);
-(* bad test 5, 
-val Gtest5_2 = AbsTypingTableNoDeclaration( declaration_answer );
-*)
+
 
 (* 6 NewAbsTypingTable: AbsTypingTable -> Declaration -> AbsTypingTable
      note-----------------------old                            new----------
      funNewAbsTypingTable(oldatt: AbsTypingTable)(a:variable, TypeName1Bool)
           =(fn (b:variable)=> if b=a then DeclaredBool
-                                        else DeclaredInt) |
+                                        else oldatt(b)) |
           NewAbsTypingTable(oldatt: AbsTypingTable)(a:variable, TypeName2Int)
           =(fn(b:variable)=> if b=a then DeclaredInt
                                         else oldatt(b))
 *)
                     
 fun NewAbsTypingTable(oldatt: AbsTypingTable)(a:Variable, TypeBool)
-     =(fn (b:Variable)=> if b=a then DeclaredBool
-                                   else DeclaredInt) |
+     =(fn (b:Variable)=> if b = a then DeclaredBool
+                                   else oldatt(b)) |
      NewAbsTypingTable(oldatt: AbsTypingTable)(a:Variable, TypeInt)
-     =(fn(b:Variable)=> if b=a then DeclaredInt
+     =(fn(b:Variable)=> if b = a then DeclaredInt
                                    else oldatt(b))
+;
 
 (* ****Testing part 6  
 val myAbsTypingTable1 = NewAbsTypeTable(AbsTypingTableNoDeclaration)
@@ -278,7 +277,12 @@ val myAbsTypingTable2 = NewAbsTypingTable(myAbsTypingTable1)
      myAbsTypingTable2(var in 2nd dec )
      myAbsTypingTable2(other rows)
 *)
+(*
+val myAbsTypingTable1 = NewAbsTypeTable(AbsTypingTableNoDeclaration)
 
+myAbsTypingTable1(var_answer)
+myAbsTypingTable1([])
+*)
 
 (* 7 wholeAbsTypingTable: DeclarationList -> AbsTypingTable
 val rec wholeAbsTypingTable =
@@ -297,6 +301,34 @@ val rec wholeAbsTypingTable =
 val myAbsTypingTable = wholeAbsTypingTable(mydecList)
      myAbsTypingTable(each var in my declist)
      myAbsTypingTable(one var not in my declist)
+*)
+
+
+(* 8 DetermineExpType: Expression -> AbsTypingTable -> TypeValue
+fun DetermineExpType(EDC1(x)) = (fn(y:AbsTypingTable)=>y(x)) |
+     DetermineExpType(EDC2=(x)) => (fn(y:AbsTypingTable) => DeclaredInt) |
+     DetermineExpType(EDC3=(x)) => (fn(y:AbsTypingTable) => DeclaredBool) |
+     DetermineExpType(EDC4=(x1,x2,ODC1(opa)))=>
+                              (fn(y:AbsTypingTable)=>DeclaredInt) |
+     DetermineExpType(EDC5=(x1,x2,ODC1(opa)))=>
+                              (fn(y:AbsTypingTable)=>DeclaredBool) |
+     DetermineExpType(EDC6=(x1,x2,ODC1(opa)))=>
+                              (fn(y:AbsTypingTable)=>DeclaredBool) |
+     ------realational--boolean
+*)
+
+
+(* 9 ExpressionVCheck: Expression -> AbsTypingTable -> Bool
+fun ExpressionVCheck(EDC1(a)) => (fn(b:AbsTypingTable) => b(a) <> NoDeclaration) |
+     ExpressionVCheck(EDC2(a)) => (fn(b:AbsTypingTable)=>true) |
+     ExpressionVCheck(EDC3(a)) => (fn(b:AbsTypingTable)=>true) |
+     ExpressionVCheck(EDC4(a1, a2, ODC1(opa)) =>
+          (fn(b:AbsTypingTable) =>
+          Expression(a1)(b) ) andalso
+          (DetermineExpType(a1)(b) = DeclaredInt ) andalso
+          Expression(a2)(b) andalso  
+          (DetermineExpType())   )
+
 *)
 
 (*------------End step2 static sementics---------------*)
