@@ -327,7 +327,78 @@ fun ExpressionVCheck(EDC1(a)) => (fn(b:AbsTypingTable) => b(a) <> NoDeclaration)
           Expression(a1)(b) ) andalso
           (DetermineExpType(a1)(b) = DeclaredInt ) andalso
           Expression(a2)(b) andalso  
-          (DetermineExpType())   )
+          (DetermineExpType(a2)(b) =DeclaredInt) | 
+     
+     )
+
+*)
+
+(* ****testing part 9, 6-good cases
+EDC4(a1,a2, ODC1(opa))
+be realistic a>b, a=bb
+no (a+b), 
+at least once yes ( )+( )
+*)
+
+(* *****testing part 9 1-bad case
+Importatnt! to do one, use a good AbsTypingTable 
+*)
+
+(* 10 checkvalidity fn Instruction, 6 patterns skp, var*exp, ifthenelse, whileloop, list empty, list nonempty
+10. InstructionVCheck: AbsTypingTable -> Instruction -> Bool
+val rec InstructionVCheck =
+     (fn(a:AbsTypingTable) =>
+          (fn (Skip) => true ) |
+               (IDC2(x, y)) => 
+                    (a(x) = DetermineExpType(y)(a) ) andalso
+                    (a(x) <> NoDeclaration) andalso
+                    ExpressionVCheck(y)(a) |
+          ----IfThenElse----
+               (IDC3(x,y,z)) =>
+                    (DetermineExpType(x)(a) = DeclaredBool) andalso
+                    ExpressionVCheck(x)(a) andalso
+                    InstructionVCheck(a)(y) andalso InstructionVCheck(a)(z) |
+          -----whileloop-----
+               (IDC4(x,y)) => 
+                    (DetermineExpType(x)(a) = DeclaredBool) andalso
+                    ExpressionVCheck(x)(a) andalso
+                    InstructionVCheck(a)(y) |
+          -----list empty -----
+               (IDC5([])) => true |
+               (IDC5(InstListHead :: InstListTail)) =>
+                    InstructionVCheck(a)(InstListHead) andalso
+                    InstructionVCheck(a)(IDC5(InstListTail))     
+     )
+
+*)
+
+(*  ****testing part 10, 4-good cases 
+          (no skp, no []) 
+*)
+
+(* ****tesing part 10, 1-bad case
+          bad assignment
+          Importatnt!
+          use a a good AbsTypingTable  
+*)
+
+
+(* 11. checkvalidity fn Program
+ 11 ProgramVCheck: Program -> Bool
+fun ProgramVCheck(a,b) =
+     DecListVCheck(a) andalso
+     InstructionVCheck(wholeAbsTypingTable(a))(b)
+
+*)
+
+(*  ****testing part 11, 1-good case, apply to sample Program
+     if false then wrong in (function validity) or (program code)
+
+*)
+
+(* ****testing part 11, 1-bad case
+     similar part2 DecListVCheck so  
+     just focus on bad InstructionVCheck - bad body
 
 *)
 
