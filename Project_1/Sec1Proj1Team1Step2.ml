@@ -310,9 +310,9 @@ fun DetermineExpType(EDC1(x)) = (fn(y:AbsTypingTable)=>y(x)) |
      DetermineExpType(EDC3=(x)) => (fn(y:AbsTypingTable) => DeclaredBool) |
      DetermineExpType(EDC4=(x1,x2,ODC1(opa)))=>
                               (fn(y:AbsTypingTable)=>DeclaredInt) |
-     DetermineExpType(EDC5=(x1,x2,ODC1(opa)))=>
+     DetermineExpType(EDC4=(x1,x2,ODC2(opa)))=>
                               (fn(y:AbsTypingTable)=>DeclaredBool) |
-     DetermineExpType(EDC6=(x1,x2,ODC1(opa)))=>
+     DetermineExpType(EDC4=(x1,x2,ODC3(opa)))=>
                               (fn(y:AbsTypingTable)=>DeclaredBool) |
      ------realational--boolean
 *)
@@ -327,7 +327,19 @@ fun ExpressionVCheck(EDC1(a)) => (fn(b:AbsTypingTable) => b(a) <> NoDeclaration)
           Expression(a1)(b) ) andalso
           (DetermineExpType(a1)(b) = DeclaredInt ) andalso
           Expression(a2)(b) andalso  
-          (DetermineExpType(a2)(b) =DeclaredInt) | 
+          (DetermineExpType(a2)(b) =DeclaredInt)) | 
+     ExpressionVCheck(EDC5(a1, a2, ODC2(opa)) =>
+          (fn(b:AbsTypingTable) =>
+          Expression(a1)(b) ) andalso
+          (DetermineExpType(a1)(b) = DeclaredInt ) andalso
+          Expression(a2)(b) andalso  
+          (DetermineExpType(a2)(b) =DeclaredInt)) | 
+     ExpressionVCheck(EDC6(a1, a2, ODC3(opa)) =>
+          (fn(b:AbsTypingTable) =>
+          Expression(a1)(b) ) andalso
+          (DetermineExpType(a1)(b) = DeclaredInt ) andalso
+          Expression(a2)(b) andalso  
+          (DetermineExpType(a2)(b) =DeclaredInt)) | 
      
      )
 
