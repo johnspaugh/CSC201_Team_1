@@ -142,4 +142,13 @@ val NewAbsTypingTable = fn
   : AbsTypingTable -> Variable * Type -> Variable -> TypeValue
 val wholeAbsTypingTable = fn : DeclarationList -> AbsTypingTable
 val DetermineExpType = fn : Expression -> AbsTypingTable -> TypeValue
+stdIn:362.45-363.14 Error: syntax error: deleting  EQUALOP LPAREN FN
+stdIn:363.33-364.26 Error: syntax error: deleting  DARROW IDA
+stdIn:364.36-365.12 Error: syntax error: deleting  ANDALSO LPAREN
+stdIn:365.50-365.59 Error: syntax error: deleting  RPAREN ANDALSO
+stdIn:367.51-367.54 Error: syntax error: deleting  RPAREN BAR
+stdIn:374.45-375.14 Error: syntax error: deleting  EQUALOP LPAREN FN
+stdIn:375.33-376.26 Error: syntax error: deleting  DARROW IDA
+stdIn:376.36-377.12 Error: syntax error: deleting  ANDALSO LPAREN
+stdIn:377.51-377.60 Error: syntax error: deleting  RPAREN ANDALSO
 - 
