@@ -306,16 +306,29 @@ val myAbsTypingTable = wholeAbsTypingTable(mydecList)
 
 (* 8 DetermineExpType: Expression -> AbsTypingTable -> TypeValue
 fun DetermineExpType(EDC1(x)) = (fn(y:AbsTypingTable)=>y(x)) |
-     DetermineExpType(EDC2=(x)) => (fn(y:AbsTypingTable) => DeclaredInt) |
-     DetermineExpType(EDC3=(x)) => (fn(y:AbsTypingTable) => DeclaredBool) |
-     DetermineExpType(EDC4=(x1,x2,ODC1(opa)))=>
+     DetermineExpType(EDC2(x)) => (fn(y:AbsTypingTable) => DeclaredInt) |
+     DetermineExpType(EDC3(x)) => (fn(y:AbsTypingTable) => DeclaredBool) |
+     DetermineExpType(EDC4(x1,x2,ODC1(opa)))=>
                               (fn(y:AbsTypingTable)=>DeclaredInt) |
-     DetermineExpType(EDC4=(x1,x2,ODC2(opa)))=>
+     ------realational->boolean
+     DetermineExpType(EDC4(x1,x2,ODC2(opa)))=>
                               (fn(y:AbsTypingTable)=>DeclaredBool) |
-     DetermineExpType(EDC4=(x1,x2,ODC3(opa)))=>
+     DetermineExpType(EDC4(x1,x2,ODC3(opa)))=>
                               (fn(y:AbsTypingTable)=>DeclaredBool) |
-     ------realational--boolean
+     
 *)
+
+(* should review this, I took away the => because pattern above 'fun =' and 'fn =>' *)
+fun DetermineExpType(Var(x)) = (fn(y:AbsTypingTable) => y(x)) |
+     DetermineExpType(IC(x)) = (fn(y:AbsTypingTable) => DeclaredInt) |
+     DetermineExpType(BC(x)) = (fn(y:AbsTypingTable) => DeclaredBool) |
+     DetermineExpType(EEO(x1, x2, AOp(opa) ) ) =
+                              (fn(y:AbsTypingTable) => DeclaredInt) |
+     DetermineExpType(EEO(x1, x2, ROp(opa) ) ) =
+                              (fn(y:AbsTypingTable) => DeclaredBool) |
+     DetermineExpType(EEO(x1, x2, BOp(opa) ) ) =
+                              (fn(y:AbsTypingTable) => DeclaredBool) 
+     ;
 
 
 (* 9 ExpressionVCheck: Expression -> AbsTypingTable -> Bool

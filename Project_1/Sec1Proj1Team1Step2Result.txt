@@ -141,4 +141,5 @@ stdIn:266.30 Warning: calling polyEqual
 val NewAbsTypingTable = fn
   : AbsTypingTable -> Variable * Type -> Variable -> TypeValue
 val wholeAbsTypingTable = fn : DeclarationList -> AbsTypingTable
+val DetermineExpType = fn : Expression -> AbsTypingTable -> TypeValue
 - 
