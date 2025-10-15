@@ -357,26 +357,25 @@ fun ExpressionVCheck(EDC1(a)) => (fn(b:AbsTypingTable) => b(a) <> NoDeclaration)
 
 (* okay, this need to be reviewed and fixed, but this is far as I can get, hope its helpful *)
 fun ExpressionVCheck(Var(a)) = (fn(b:AbsTypingTable) => b(a) <> NoDeclaration) |
-     ExpressionVCheck(IC(a)) = (fn(b:AbsTypingTable)=>true) |
-     ExpressionVCheck(BC(a)) = (fn(b:AbsTypingTable)=>true) |
-     ExpressionVCheck(EEO(a1, a2, AOp(opa)) =
-          (fn(b:AbsTypingTable) => 
-               Expression(a1)(b) ) andalso
+     ExpressionVCheck(IC(a)) = (fn(b:AbsTypingTable) => true) |
+     ExpressionVCheck(BC(a)) = (fn(b:AbsTypingTable) => true) |
+     ExpressionVCheck(EEO(a1, a2, AOp(opa))) =
+          (fn(b:AbsTypingTable) => Expression(a1)(b) ) andalso
           (DetermineExpType(a1)(b) = DeclaredInt ) andalso
           Expression(a2)(b) andalso  
-          (DetermineExpType(a2)(b) = DeclaredInt) ) | 
-     ExpressionVCheck(EEO(a1, a2, ROp(opa)) =
+          (DetermineExpType(a2)(b) = DeclaredInt)  | 
+     ExpressionVCheck(EEO(a1, a2, ROp(opa))) =
           (fn(b:AbsTypingTable) => 
                Expression(a1)(b) ) andalso
-          (DetermineExpType(a1)(b) = DeclaredInt ) andalso
+         (DetermineExpType(a1)(b) = DeclaredInt ) andalso
           Expression(a2)(b) andalso  
-          (DetermineExpType(a2)(b) = DeclaredInt) ) | 
-     ExpressionVCheck(EEO(a1, a2, BOp(opa)) =
+          (DetermineExpType(a2)(b) = DeclaredInt)  | 
+     ExpressionVCheck(EEO(a1, a2, BOp(opa))) =
           (fn(b:AbsTypingTable) => 
                Expression(a1)(b) ) andalso
           (DetermineExpType(a1)(b) = DeclaredBool ) andalso
           Expression(a2)(b) andalso  
-          (DetermineExpType(a2)(b) = DeclaredBool) ) 
+          (DetermineExpType(a2)(b) = DeclaredBool)  
 ;
 
 (* ****testing part 9, 6-good cases

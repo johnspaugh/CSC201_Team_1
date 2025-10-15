@@ -142,26 +142,40 @@ val NewAbsTypingTable = fn
   : AbsTypingTable -> Variable * Type -> Variable -> TypeValue
 val wholeAbsTypingTable = fn : DeclarationList -> AbsTypingTable
 val DetermineExpType = fn : Expression -> AbsTypingTable -> TypeValue
-stdIn:362.45-363.14 Error: syntax error: deleting  EQUALOP LPAREN FN
-stdIn:363.33-364.26 Error: syntax error: deleting  DARROW IDA
-stdIn:364.36-365.12 Error: syntax error: deleting  ANDALSO LPAREN
-stdIn:365.50-365.59 Error: syntax error: deleting  RPAREN ANDALSO
-stdIn:367.51-367.54 Error: syntax error: deleting  RPAREN BAR
-stdIn:374.45-375.14 Error: syntax error: deleting  EQUALOP LPAREN FN
-stdIn:375.33-376.26 Error: syntax error: deleting  DARROW IDA
-stdIn:376.36-377.12 Error: syntax error: deleting  ANDALSO LPAREN
-stdIn:377.51-377.60 Error: syntax error: deleting  RPAREN ANDALSO
-stdIn:379.52-380.2 Error: syntax error: deleting  RPAREN SEMICOLON
-stdIn:423.20-423.27 Error: syntax error: deleting  DARROW IDA
-stdIn:424.22-425.17 Error: syntax error: deleting  DARROW LPAREN
-stdIn:425.22-425.40 Error: syntax error: deleting  EQUALOP IDA
-stdIn:425.47-426.17 Error: syntax error: deleting  RPAREN ANDALSO LPAREN
-stdIn:426.38-427.32 Error: syntax error: deleting  RPAREN ANDALSO IDA
-stdIn:427.42-428.12 Error: syntax error: deleting  BAR LPAREN
-stdIn:431.74-432.12 Error: syntax error: deleting  BAR LPAREN
-stdIn:432.26-433.17 Error: syntax error: deleting  RPAREN DARROW LPAREN
-stdIn:435.40-435.43 Error: syntax error: deleting  RPAREN BAR
-stdIn:436.21-436.28 Error: syntax error: deleting  DARROW IDA
-stdIn:436.31-437.12 Error: syntax error: deleting  BAR LPAREN
-stdIn:437.45-438.33 Error: syntax error: deleting  RPAREN DARROW IDA
-- 
+stdIn:363.36-363.46 Error: unbound variable or constructor: Expression
+stdIn:364.33 Error: unbound variable or constructor: b
+stdIn:365.11-365.21 Error: unbound variable or constructor: Expression
+stdIn:365.26 Error: unbound variable or constructor: b
+stdIn:366.33 Error: unbound variable or constructor: b
+stdIn:369.16-369.26 Error: unbound variable or constructor: Expression
+stdIn:370.32 Error: unbound variable or constructor: b
+stdIn:371.11-371.21 Error: unbound variable or constructor: Expression
+stdIn:371.26 Error: unbound variable or constructor: b
+stdIn:372.33 Error: unbound variable or constructor: b
+stdIn:375.16-375.26 Error: unbound variable or constructor: Expression
+stdIn:376.33 Error: unbound variable or constructor: b
+stdIn:377.11-377.21 Error: unbound variable or constructor: Expression
+stdIn:377.26 Error: unbound variable or constructor: b
+stdIn:378.33 Error: unbound variable or constructor: b
+stdIn:363.11-366.50 Error: operand of andalso is not of type bool [tycon mismatch]
+  operand: AbsTypingTable -> _
+  in expression:
+    (fn b : AbsTypingTable => (<errorvar> a1) b)
+  andalso (((DetermineExpType a1) <errorvar> = DeclaredInt)
+  andalso (((<errorvar> a2) <errorvar>)
+  andalso ((DetermineExpType a2) <errorvar> = DeclaredInt)))
+stdIn:368.11-372.50 Error: operand of andalso is not of type bool [tycon mismatch]
+  operand: AbsTypingTable -> _
+  in expression:
+    (fn b : AbsTypingTable => (<errorvar> a1) b)
+  andalso (((DetermineExpType a1) <errorvar> = DeclaredInt)
+  andalso (((<errorvar> a2) <errorvar>)
+  andalso ((DetermineExpType a2) <errorvar> = DeclaredInt)))
+stdIn:374.11-378.51 Error: operand of andalso is not of type bool [tycon mismatch]
+  operand: AbsTypingTable -> _
+  in expression:
+    (fn b : AbsTypingTable => (<errorvar> a1) b)
+  andalso (((DetermineExpType a1) <errorvar> = DeclaredBool)
+  andalso (((<errorvar> a2) <errorvar>)
+  andalso ((DetermineExpType a2) <errorvar> = DeclaredBool)))
+- - 
