@@ -151,4 +151,17 @@ stdIn:374.45-375.14 Error: syntax error: deleting  EQUALOP LPAREN FN
 stdIn:375.33-376.26 Error: syntax error: deleting  DARROW IDA
 stdIn:376.36-377.12 Error: syntax error: deleting  ANDALSO LPAREN
 stdIn:377.51-377.60 Error: syntax error: deleting  RPAREN ANDALSO
+stdIn:379.52-380.2 Error: syntax error: deleting  RPAREN SEMICOLON
+stdIn:423.20-423.27 Error: syntax error: deleting  DARROW IDA
+stdIn:424.22-425.17 Error: syntax error: deleting  DARROW LPAREN
+stdIn:425.22-425.40 Error: syntax error: deleting  EQUALOP IDA
+stdIn:425.47-426.17 Error: syntax error: deleting  RPAREN ANDALSO LPAREN
+stdIn:426.38-427.32 Error: syntax error: deleting  RPAREN ANDALSO IDA
+stdIn:427.42-428.12 Error: syntax error: deleting  BAR LPAREN
+stdIn:431.74-432.12 Error: syntax error: deleting  BAR LPAREN
+stdIn:432.26-433.17 Error: syntax error: deleting  RPAREN DARROW LPAREN
+stdIn:435.40-435.43 Error: syntax error: deleting  RPAREN BAR
+stdIn:436.21-436.28 Error: syntax error: deleting  DARROW IDA
+stdIn:436.31-437.12 Error: syntax error: deleting  BAR LPAREN
+stdIn:437.45-438.33 Error: syntax error: deleting  RPAREN DARROW IDA
 - 

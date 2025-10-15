@@ -418,6 +418,28 @@ val rec InstructionVCheck =
 
 *)
 
+val rec InstructionVCheck =
+     (fn (a:AbsTypingTable) =>
+          ( (Skip) => true ) |
+          ( VE(x, y) => 
+               (a(x) = DetermineExpType(y)(a) ) andalso
+               (a(x) <> NoDeclaration) andalso
+               ExpressionVCheck(y)(a) )  | 
+          ( IfThenElse(x,y,z) =>
+               (DetermineExpType(x)(a) = DeclaredBool) andalso
+               ExpressionVCheck(x)(a) andalso
+               InstructionVCheck(a)(y) andalso InstructionVCheck(a)(z) ) |
+          ( WhileLoop(x,y) => 
+               (DetermineExpType(x)(a) = DeclaredBool) andalso
+               ExpressionVCheck(x)(a) andalso
+               InstructionVCheck(a)(y) ) |
+          ( Seq([]) => true ) |
+          ( Seq(InstListHead :: InstListTail)  =>
+               InstructionVCheck(a)(InstListHead) andalso
+               InstructionVCheck(a)(Seq(InstListTail)) )   
+     )
+;
+
 (*  ****testing part 10, 4-good cases 
           (no skp, no []) 
 *)
@@ -434,8 +456,12 @@ val rec InstructionVCheck =
 fun ProgramVCheck(a,b) =
      DecListVCheck(a) andalso
      InstructionVCheck(wholeAbsTypingTable(a))(b)
-
 *)
+
+fun ProgramVCheck(a,b) =
+     DecListVCheck(a) andalso
+     InstructionVCheck(wholeAbsTypingTable(a))(b)
+;
 
 (*  ****testing part 11, 1-good case, apply to sample Program
      if false then wrong in (function validity) or (program code)
