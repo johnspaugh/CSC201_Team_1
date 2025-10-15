@@ -128,12 +128,90 @@ val lucas = (allDeclarations, Seq allInstructions)
 fun NoDuplicate((a: Variable, b: Type):: decListTail)(c: Variable) = (a <> c) andalso NoDuplicate decListTail c
   | NoDuplicate [] c = true;
 
+val rec DecListVCheck =
+     (fn ( ((a: Variable, b: Type):: decListTail):DeclarationList) =>
+          DecListVCheck(decListTail) andalso
+          NoDuplicate(decListTail)(a) |
+          ([]) => true  
+     ) ;
 
-NoDuplicate allDeclarations (S "nero")
+(*Good testing step 2, input allDeclarations list with int into DecListVCheck
+test1 expected false, Gtest1 expected true*)
 
-          
+val test1 = NoDuplicate(allDeclarations )(var_answer); 
+val Gtest1 = DecListVCheck(allDeclarations);
 
+(* Bad testing step 2, New List using allDeclarations adding on a duplicate n to the head
+Btest1 expected false*)
+val declarationslist_bad = declaration_n :: allDeclarations;
+val Btest1 = DecListVCheck(declarationslist_bad);
 
+(* 3-7 : DeclarationList -> AbsTypingTable *)
+
+(* 3 *)
+datatype TypeValue = NoDeclaration | DeclaredInt | DeclaredBool ;
+
+(* 4 *)
+type AbsTypingTable = Variable -> TypeValue 
+
+(* 5 *)
+val AbsTypingTableNoDeclaration = (fn (x:Variable) => NoDeclaration)    
+
+(* ***Testing 5 one apply for variables for the declaration of all apply *)
+val Gtest5_1 = AbsTypingTableNoDeclaration(var_answer);
+
+(* 6 *)             
+fun NewAbsTypingTable(oldatt: AbsTypingTable)(a:Variable, TypeBool)
+     =(fn (b:Variable)=> if b = a then DeclaredBool
+                                   else oldatt(b)) |
+     NewAbsTypingTable(oldatt: AbsTypingTable)(a:Variable, TypeInt)
+     =(fn(b:Variable)=> if b = a then DeclaredInt
+                                   else oldatt(b));
+
+(* Step 6 Testing 
+Had to add var bb to test for boolean since allDeclarations has none*)
+val myAbsTypingTable1 = NewAbsTypingTable(AbsTypingTableNoDeclaration)(declaration_n);
+myAbsTypingTable1 var_n;
+myAbsTypingTable1 var_answer;
+
+val var_bb  = S "bb";
+val declaration_bb      = (var_bb, TypeBool);
+
+val myAbsTypingTable2 = NewAbsTypingTable(myAbsTypingTable1)(declaration_bb);
+myAbsTypingTable2 var_n;
+myAbsTypingTable2 var_bb;
+myAbsTypingTable2 var_answer;
+
+(* 7 *)
+val rec wholeAbsTypingTable =
+     (fn ((decListhead:: decListTail):DeclarationList)=>
+          NewAbsTypingTable(wholeAbsTypingTable(decListTail) )(decListhead) |
+          ([]) => AbsTypingTableNoDeclaration
+     );
+
+(*Step 7 Testing 
+Every var in allDecs should output its' type, any var not in allDecs should be no dec*)
+val myAbsTypingTable = wholeAbsTypingTable(allDeclarations);
+myAbsTypingTable(var_n);
+myAbsTypingTable(var_cur);
+myAbsTypingTable(var_prev1);
+myAbsTypingTable(var_prev2);
+myAbsTypingTable(var_i);
+myAbsTypingTable(var_answer);
+myAbsTypingTable(var_temp);
+
+(* 8 DetermineExpType: Expression -> AbsTypingTable -> TypeValue
+fun DetermineExpType(EDC1(x)) = (fn(y:AbsTypingTable)=>y(x)) |
+     DetermineExpType(EDC2=(x)) => (fn(y:AbsTypingTable) => DeclaredInt) |
+     DetermineExpType(EDC3=(x)) => (fn(y:AbsTypingTable) => DeclaredBool) |
+     DetermineExpType(EDC4=(x1,x2,ODC1(opa)))=>
+                              (fn(y:AbsTypingTable)=>DeclaredInt) |
+     DetermineExpType(EDC5=(x1,x2,ODC1(opa)))=>
+                              (fn(y:AbsTypingTable)=>DeclaredBool) |
+     DetermineExpType(EDC6=(x1,x2,ODC1(opa)))=>
+                              (fn(y:AbsTypingTable)=>DeclaredBool) |
+     ------realational--boolean
+*)
 
 (* -------------------
 cpp file
