@@ -24,7 +24,7 @@ datatype Type = TypeBool | TypeInt
 type Declaration = Variable * Type
 type DeclarationList = Declaration list
 type Program = DeclarationList * Instruction
-stdIn:128.73-128.75 Warning: calling polyEqual
+stdIn:171.73-171.75 Warning: calling polyEqual
 val var_n = S "n" : Variable
 val var_cur = S "cur" : Variable
 val var_prev1 = S "prev1" : Variable
@@ -125,5 +125,41 @@ val lucas =
          Seq [VE (S #,IC #),IfThenElse (EEO #,VE #,Seq #)])])
   : (Variable * Type) list * Instruction
 val NoDuplicate = fn : (Variable * Type) list -> Variable -> bool
-val it = true : bool
-
+val DecListVCheck = fn : DeclarationList -> bool
+val test1 = false : bool
+val Gtest1 = true : bool
+val declarationslist_bad =
+  [(S "n",TypeInt),(S "n",TypeInt),(S "cur",TypeInt),(S "prev1",TypeInt),
+   (S "prev2",TypeInt),(S "i",TypeInt),(S "answer",TypeInt)]
+  : (Variable * Type) list
+val Btest1 = false : bool
+datatype TypeValue = DeclaredBool | DeclaredInt | NoDeclaration
+type AbsTypingTable = Variable -> TypeValue
+val AbsTypingTableNoDeclaration = fn : Variable -> TypeValue
+val Gtest5_1 = NoDeclaration : TypeValue
+stdIn:208.31 Warning: calling polyEqual
+stdIn:211.30 Warning: calling polyEqual
+val NewAbsTypingTable = fn
+  : AbsTypingTable -> Variable * Type -> Variable -> TypeValue
+val myAbsTypingTable1 = fn : Variable -> TypeValue
+val it = DeclaredInt : TypeValue
+val it = NoDeclaration : TypeValue
+val var_bb = S "bb" : Variable
+val declaration_bb = (S "bb",TypeBool) : Variable * Type
+val myAbsTypingTable2 = fn : Variable -> TypeValue
+val it = DeclaredInt : TypeValue
+val it = DeclaredBool : TypeValue
+val it = NoDeclaration : TypeValue
+val wholeAbsTypingTable = fn : DeclarationList -> AbsTypingTable
+val myAbsTypingTable = fn : AbsTypingTable
+val it = DeclaredInt : TypeValue
+val it = DeclaredInt : TypeValue
+val it = DeclaredInt : TypeValue
+val it = DeclaredInt : TypeValue
+val it = DeclaredInt : TypeValue
+val it = DeclaredInt : TypeValue
+val it = NoDeclaration : TypeValue
+val DetermineExpType = fn : Expression -> AbsTypingTable -> TypeValue
+val ExpressionVCheck = fn : Expression -> AbsTypingTable -> bool
+val InstructionVCheck = fn : AbsTypingTable -> Instruction -> bool
+val ProgramVCheck = fn : DeclarationList * Instruction -> bool
