@@ -338,7 +338,7 @@ val ItestGood_3 = InstructionVCheck myAbsTypingTable ipp
 val ItestGood_4 = InstructionVCheck myAbsTypingTable (Seq inner_Else)
 
 (* ****testing part 10, 1-bad case**** *)
-val badInstrcution   = VE (var_n, BC true)  
+val badInstrucution   = VE (var_n, BC true)  
 val ItestBad_1 = InstructionVCheck myAbsTypingTable badInstrcution
 
 
