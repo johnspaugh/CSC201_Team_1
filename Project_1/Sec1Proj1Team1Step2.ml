@@ -1,0 +1,478 @@
+(* CSC201, Section 1, TEAM 1, John Spaugh,
+    Taro Kumagai,
+    Niravkumar Tandel 
+    Charles Thomas *)
+
+(*---- Sec1Proj1Team1Step1 ----------------------*)
+
+
+(* Abastract Grammar of a Graal-like Language in BNF for Project *)
+type Integer_Constant =  int;
+type Boolean_Constant = bool;
+datatype Variable = S of string;
+
+datatype Arithmatic_Op = Plus | Minus | Times | Div;
+datatype Relational_Op = Lt | Le | Eq | Ne | Ge | Gt;
+datatype Boolean_Op = And | Or;
+datatype Operator = AOp of Arithmatic_Op | ROp of Relational_Op | BOp of Boolean_Op; 
+
+datatype Expression = Var of Variable |
+            IC of Integer_Constant |
+            BC of Boolean_Constant |
+            EEO of Expression * Expression * Operator;
+
+
+datatype Instruction = Skip | 
+            VE of (Variable * Expression) | 
+            IfThenElse of (Expression * Instruction * Instruction) |
+            WhileLoop of (Expression * Instruction) | 
+            Seq of Instruction list;
+
+
+datatype Type = TypeBool | TypeInt ;
+
+type Declaration = Variable * Type;
+type DeclarationList = Declaration list;  
+
+type Program = DeclarationList * Instruction;
+
+
+
+(* Val Variable Declarations *)
+val var_n       = S "n";
+val var_cur     = S "cur";
+val var_prev1   = S "prev1";
+val var_prev2   = S "prev2";
+val var_i       = S "i";
+val var_answer  = S "answer";
+val var_temp    = S "temp";
+
+val declaration_n      = (var_n, TypeInt);
+val declaration_cur    = (var_cur, TypeInt);
+val declaration_prev1  = (var_prev1, TypeInt);
+val declaration_prev2  = (var_prev2, TypeInt);
+val declaration_i      = (var_i, TypeInt);
+val declaration_answer = (var_answer, TypeInt);
+
+
+(* Full Declaration List *)
+val allDeclarations = [
+    declaration_n, 
+    declaration_cur, 
+    declaration_prev1, 
+    declaration_prev2, 
+    declaration_i, 
+    declaration_answer
+    ];
+    
+(* Relational Logic *)
+val n_equals_0 = EEO (Var var_n, IC 0, ROp Eq);           (* n == 0 *)
+val n_equals_1 = EEO (Var var_n, IC 1, ROp Eq);           (* n == 1 *)
+val i_lessthan_n = EEO (Var var_i, Var var_n, ROp Lt);    (* i < n *)
+
+(* Assignment Instructions, FORMAT assign_variable_value *)
+val assign_n_15         = VE (var_n, IC 15);                 (* n = 15 *)
+val assign_answer_1     = VE (var_answer, IC 1);             (* answer = 1 *)
+val assign_answer_2     = VE (var_answer, IC 2);             (* answer = 2 *)
+val assign_i_1          = VE (var_i, IC 1);                  (* i = 1 *)
+val assign_prev1_1      = VE (var_prev1, IC 1);              (* prev1 = 1 *)
+val assign_prev2_2      = VE (var_prev2, IC 2);              (* prev2 = 2 *)
+val assign_answer_cur   = VE (var_answer, Var var_cur);      (* answer = cur *)
+val assign_prev2_prev1  = VE (var_prev2, Var var_prev1);     (* prev2 = prev1 *)
+val assign_prev1_cur    = VE (var_prev1, Var var_cur);       (* prev1 = cur*)
+
+
+(* Arithmatic Expressions *)
+val add_i_1 = EEO (Var var_i, IC 1, AOp Plus);                       (* i + 1 *)
+val add_prev1_prev2 = EEO (Var var_prev1, Var var_prev2, AOp Plus);  (* prev1 + prev2 *)
+
+(* Arithmatic Instructions *)
+val ipp =  VE (var_i, add_i_1);                              (* i++ *)
+val cur_prev1_plus_prev2 = VE (var_cur, add_prev1_prev2);    (* cur = prev1 + prev2 *)
+
+
+(* Instructions *)
+val insideWhile = [
+    ipp, 
+    cur_prev1_plus_prev2, 
+    assign_prev2_prev1, 
+    assign_prev1_cur
+    ];
+    
+val whileLoop = WhileLoop(i_lessthan_n, Seq insideWhile); 
+
+val inner_Else = [
+    assign_prev2_2, 
+    assign_prev1_1, 
+    whileLoop, 
+    assign_answer_cur
+    ];
+    
+val inner_ifThenElse = IfThenElse(n_equals_1, assign_answer_1, Seq inner_Else);   
+
+val outer_Else = [
+    assign_i_1, 
+    inner_ifThenElse
+    ];
+    
+val outer_ifThenElse = IfThenElse(n_equals_0, assign_answer_2, Seq outer_Else);  
+
+val allInstructions = [assign_n_15, outer_ifThenElse];
+
+
+(* The Program LUCAS*)
+val lucas = (allDeclarations, Seq allInstructions);
+
+
+(* -------------------
+cpp file
+
+#include <cstdlib>
+#include <iomanip>
+#include <iostream>
+
+int main(){ //int argc, char *argv[]){
+     int n;
+     int cur;
+     int prev1;
+     int prev2;
+     int i;
+     int answer;
+
+     n=15;
+
+     if(n == 0){
+          answer = 2;
+     }else{
+          i=1;
+          if(n ==1){
+               answer=1;
+          }else{
+               prev2 =2;
+               prev1 =1;
+               while (i < n){
+                    i++; // i = i +1;
+                    cur = prev1 + prev2;
+                    prev2 = prev1;
+                    prev1 = cur;
+               }
+               answer = cur;
+          }
+     }
+     std::cout << "Answer: " << answer << std::endl;
+     return 0;
+}
+
+---------------------------*)
+
+(*------------step2 static semantics---------------*)
+(* sml<Sec1Proj1Team1Step2.ml>Sec1Proj1Team1Step2Result.txt   *)
+
+(* 1-2 check Validity of DeclarationList
+     1. NoDuplicate: DeclarationList -> 
+               variable -> Bool
+     Fun NoDuplicate ((a: varaibale, b: Type):: decListTail), 
+          (c: variable) = 
+          (a <> c) ^ NoDuplicate(decListTail)(c) |
+          NoDuplicate([])(c: variable) =true;
+*)
+
+fun NoDuplicate ((a: Variable, b: Type):: decListTail)(c: Variable) = 
+     (a <> c) andalso NoDuplicate(decListTail)(c) |
+     NoDuplicate([])(c: Variable) =true;
+
+(* ^ == andalso  *)
+
+(* 2. DecListVCheck: DeclarationList -> Bool 
+val rec DecListVCheck =
+     (fn ( ((a:Variable, b:Type):: decListTail):DeclarationList) =>
+          DecListVCheck(decListTail) andalso
+          NoDuplicate(decListTail)(a) |
+          ([])=>true);  *)
+(* This was alternative 1 created, but can't be used, not what the Professor asked for in the assignment
+fun DecListVCheck ((a:Variable, b:Type)::decListTail : DeclarationList) =
+     DecListVCheck( decListTail) andalso NoDuplicate( decListTail)( a )
+     | DecListVCheck( []) = true ;
+*)
+(* This was alternative 2 created, but can't be used, not what the Professor asked for in the assignment
+val rec DecListVCheck =
+  fn DeclarationList =>
+    case DeclarationList of
+        (a: Variable, b: Type)::decListTail =>
+            DecListVCheck decListTail andalso NoDuplicate decListTail a
+      | [] => true;
+*)
+
+
+val rec DecListVCheck =
+     (fn ( ((a: Variable, b: Type):: decListTail):DeclarationList) =>
+          DecListVCheck(decListTail) andalso
+          NoDuplicate(decListTail)(a) |
+          ([]) => true  
+     ) ;
+
+(*Good testing step 2, input allDeclarations list with int into DecListVCheck
+test1 expected false, Gtest1 expected true*)
+
+val test1 = NoDuplicate(allDeclarations )(var_answer); 
+val Gtest1 = DecListVCheck(allDeclarations);
+
+(* Bad testing step 2, New List using allDeclarations adding on a duplicate n to the head
+Btest1 expected false*)
+val declarationslist_bad = declaration_n :: allDeclarations;
+val Btest1 = DecListVCheck(declarationslist_bad);
+
+
+(* 3-7 : DeclarationList -> AbsTypingTable *)
+
+(* 3 datatype TypeValue = NoDeclaration | DeclaredInt | DeclaredBool |
+*)
+datatype TypeValue = NoDeclaration | DeclaredInt | DeclaredBool ;
+
+
+(* 4 Type AbsTypingTable = variable -> TypeValue
+     (* functionType *)
+     x: AbsTypingTable, y:variable
+     x(y) = (NoDeclaration, DeclaredInt, DeclaredBool)
+*)
+type AbsTypingTable = Variable -> TypeValue 
+
+(* 5 AbsTypingTableNoDeclaration: AbsTypingTable
+val AbsTypingTableNoDeclaration =
+     (fn (x:variable) => NoDeclaration)*)
+
+val AbsTypingTableNoDeclaration = (fn (x:Variable) => NoDeclaration)    
+
+
+(* ***Testing 5 one apply for variables for the declaration of all apply *)
+val Gtest5_1 = AbsTypingTableNoDeclaration(var_answer);
+
+
+(* 6 NewAbsTypingTable: AbsTypingTable -> Declaration -> AbsTypingTable
+     note-----------------------old                            new----------
+     funNewAbsTypingTable(oldatt: AbsTypingTable)(a:variable, TypeName1Bool)
+          =(fn (b:variable)=> if b=a then DeclaredBool
+                                        else oldatt(b)) |
+          NewAbsTypingTable(oldatt: AbsTypingTable)(a:variable, TypeName2Int)
+          =(fn(b:variable)=> if b=a then DeclaredInt
+                                        else oldatt(b))
+*)
+                    
+fun NewAbsTypingTable(oldatt: AbsTypingTable)(a:Variable, TypeBool)
+     =(fn (b:Variable)=> if b = a then DeclaredBool
+                                   else oldatt(b)) |
+     NewAbsTypingTable(oldatt: AbsTypingTable)(a:Variable, TypeInt)
+     =(fn(b:Variable)=> if b = a then DeclaredInt
+                                   else oldatt(b))
+;
+
+(* ****Testing part 6 ---- Step 6 Testing 
+Had to add var bb to test for boolean since allDeclarations has none*)
+val myAbsTypingTable1 = NewAbsTypingTable(AbsTypingTableNoDeclaration)(declaration_n);
+myAbsTypingTable1 var_n;
+myAbsTypingTable1 var_answer;
+
+val var_bb  = S "bb";
+val declaration_bb      = (var_bb, TypeBool);
+
+val myAbsTypingTable2 = NewAbsTypingTable(myAbsTypingTable1)(declaration_bb);
+myAbsTypingTable2 var_n;
+myAbsTypingTable2 var_bb;
+myAbsTypingTable2 var_answer;
+
+(* 7 wholeAbsTypingTable: DeclarationList -> AbsTypingTable
+val rec wholeAbsTypingTable =
+     (fn((decListhead:: decListTail):DeclarationList)=>
+          NewAbsTypingTable(wholeAbsTypingTable(decListTail)) (decListhead))
+     ([]) => AbsTypingTableNoDeclaration
+*)
+
+val rec wholeAbsTypingTable =
+     (fn ((decListhead:: decListTail):DeclarationList)=>
+          NewAbsTypingTable(wholeAbsTypingTable(decListTail) )(decListhead) |
+          ([]) => AbsTypingTableNoDeclaration
+     );
+
+(* ***Testing part 7 ----Step 7 Testing 
+Every var in allDecs should output its' type, any var not in allDecs should be no dec*)
+val myAbsTypingTable = wholeAbsTypingTable(allDeclarations);
+myAbsTypingTable(var_n);
+myAbsTypingTable(var_cur);
+myAbsTypingTable(var_prev1);
+myAbsTypingTable(var_prev2);
+myAbsTypingTable(var_i);
+myAbsTypingTable(var_answer);
+myAbsTypingTable(var_temp);
+
+
+(* 8 DetermineExpType: Expression -> AbsTypingTable -> TypeValue
+fun DetermineExpType(EDC1(x)) = (fn(y:AbsTypingTable)=>y(x)) |
+     DetermineExpType(EDC2(x)) => (fn(y:AbsTypingTable) => DeclaredInt) |
+     DetermineExpType(EDC3(x)) => (fn(y:AbsTypingTable) => DeclaredBool) |
+     DetermineExpType(EDC4(x1,x2,ODC1(opa)))=>
+                              (fn(y:AbsTypingTable)=>DeclaredInt) |
+     ------realational->boolean
+     DetermineExpType(EDC4(x1,x2,ODC2(opa)))=>
+                              (fn(y:AbsTypingTable)=>DeclaredBool) |
+     DetermineExpType(EDC4(x1,x2,ODC3(opa)))=>
+                              (fn(y:AbsTypingTable)=>DeclaredBool) |
+     
+*)
+
+(* should review this, I took away the => because pattern above 'fun =' and 'fn =>' *)
+fun DetermineExpType(Var(x)) = (fn(y:AbsTypingTable) => y(x)) |
+     DetermineExpType(IC(x)) = (fn(y:AbsTypingTable) => DeclaredInt) |
+     DetermineExpType(BC(x)) = (fn(y:AbsTypingTable) => DeclaredBool) |
+     DetermineExpType(EEO(x1, x2, AOp(opa) ) ) =
+                              (fn(y:AbsTypingTable) => DeclaredInt) |
+     DetermineExpType(EEO(x1, x2, ROp(opa) ) ) =
+                              (fn(y:AbsTypingTable) => DeclaredBool) |
+     DetermineExpType(EEO(x1, x2, BOp(opa) ) ) =
+                              (fn(y:AbsTypingTable) => DeclaredBool) 
+     ;
+
+
+(* 9 ExpressionVCheck: Expression -> AbsTypingTable -> Bool
+fun ExpressionVCheck(EDC1(a)) => (fn(b:AbsTypingTable) => b(a) <> NoDeclaration) |
+     ExpressionVCheck(EDC2(a)) => (fn(b:AbsTypingTable)=>true) |
+     ExpressionVCheck(EDC3(a)) => (fn(b:AbsTypingTable)=>true) |
+     ExpressionVCheck(EDC4(a1, a2, ODC1(opa)) =>
+          (fn(b:AbsTypingTable) =>
+          Expression(a1)(b) ) andalso
+          (DetermineExpType(a1)(b) = DeclaredInt ) andalso
+          Expression(a2)(b) andalso  
+          (DetermineExpType(a2)(b) =DeclaredInt)) | 
+     ExpressionVCheck(EDC4(a1, a2, ODC2(opa)) =>
+          (fn(b:AbsTypingTable) =>
+          Expression(a1)(b) ) andalso
+          (DetermineExpType(a1)(b) = DeclaredInt ) andalso
+          Expression(a2)(b) andalso  
+          (DetermineExpType(a2)(b) =DeclaredInt)) | 
+     ExpressionVCheck(EDC4(a1, a2, ODC3(opa)) =>
+          (fn(b:AbsTypingTable) =>
+          Expression(a1)(b) ) andalso
+          (DetermineExpType(a1)(b) = DeclaredBool ) andalso
+          Expression(a2)(b) andalso  
+          (DetermineExpType(a2)(b) = DeclaredBool)) 
+*)
+
+(* okay, this need to be reviewed and fixed, but this is far as I can get, hope its helpful *)
+fun ExpressionVCheck(Var(a)) = (fn(b:AbsTypingTable) => b(a) <> NoDeclaration) |
+     ExpressionVCheck(IC(a)) = (fn(b:AbsTypingTable) => true) |
+     ExpressionVCheck(BC(a)) = (fn(b:AbsTypingTable) => true) |
+     ExpressionVCheck(EEO(a1, a2, AOp(opa))) =
+          (fn(b:AbsTypingTable) => ExpressionVCheck(a1)(b)  andalso
+          (DetermineExpType(a1)(b) = DeclaredInt ) andalso
+          ExpressionVCheck(a2)(b) andalso  
+          (DetermineExpType(a2)(b) = DeclaredInt))  | 
+     ExpressionVCheck(EEO(a1, a2, ROp(opa))) =
+          (fn(b:AbsTypingTable) => ExpressionVCheck(a1)(b) andalso
+          (DetermineExpType(a1)(b) = DeclaredInt ) andalso
+          ExpressionVCheck(a2)(b) andalso  
+          (DetermineExpType(a2)(b) = DeclaredInt))  | 
+     ExpressionVCheck(EEO(a1, a2, BOp(opa))) =
+          (fn(b:AbsTypingTable) => ExpressionVCheck(a1)(b) andalso
+          (DetermineExpType(a1)(b) = DeclaredBool ) andalso
+          ExpressionVCheck(a2)(b) andalso  
+          (DetermineExpType(a2)(b) = DeclaredBool));
+
+(* ****testing part 9, 6-good cases
+EDC4(a1,a2, ODC1(opa))
+be realistic a>b, a=bb
+no (a+b), 
+at least once yes ( )+( )
+*)
+
+(* *****testing part 9 1-bad case
+Importatnt! to do one, use a good AbsTypingTable 
+*)
+
+(* 10 checkvalidity fn Instruction, 6 patterns skp, var*exp, ifthenelse, whileloop, list empty, list nonempty
+10. InstructionVCheck: AbsTypingTable -> Instruction -> Bool
+val rec InstructionVCheck =
+     (fn(a:AbsTypingTable) =>
+          (fn (Skip) => true ) |
+               (IDC2(x, y)) => 
+                    (a(x) = DetermineExpType(y)(a) ) andalso
+                    (a(x) <> NoDeclaration) andalso
+                    ExpressionVCheck(y)(a) |
+          ----IfThenElse----
+               (IDC3(x,y,z)) =>
+                    (DetermineExpType(x)(a) = DeclaredBool) andalso
+                    ExpressionVCheck(x)(a) andalso
+                    InstructionVCheck(a)(y) andalso InstructionVCheck(a)(z) |
+          -----whileloop-----
+               (IDC4(x,y)) => 
+                    (DetermineExpType(x)(a) = DeclaredBool) andalso
+                    ExpressionVCheck(x)(a) andalso
+                    InstructionVCheck(a)(y) |
+          -----list empty -----
+               (IDC5([])) => true |
+               (IDC5(InstListHead :: InstListTail)) =>
+                    InstructionVCheck(a)(InstListHead) andalso
+                    InstructionVCheck(a)(IDC5(InstListTail))     
+     )
+
+*)
+
+val rec InstructionVCheck =
+     (fn (a:AbsTypingTable) =>
+          (fn (Skip) => true  |
+          ( VE(x, y)) => 
+               (a(x) = DetermineExpType(y)(a) ) andalso
+               (a(x) <> NoDeclaration) andalso
+               ExpressionVCheck(y)(a)   | 
+          ( IfThenElse(x,y,z)) =>
+               (DetermineExpType(x)(a) = DeclaredBool) andalso
+               ExpressionVCheck(x)(a) andalso
+               InstructionVCheck(a)(y) andalso InstructionVCheck(a)(z) |
+          ( WhileLoop(x,y)) => 
+               (DetermineExpType(x)(a) = DeclaredBool) andalso
+               ExpressionVCheck(x)(a) andalso
+               InstructionVCheck(a)(y)  |
+          ( Seq([])) => true  |
+          ( Seq(InstListHead :: InstListTail))  =>
+               InstructionVCheck(a)(InstListHead) andalso
+               InstructionVCheck(a)(Seq(InstListTail))    
+     )
+);
+
+(*  ****testing part 10, 4-good cases 
+          (no skp, no []) 
+*)
+
+(* ****tesing part 10, 1-bad case
+          bad assignment
+          Importatnt!
+          use a a good AbsTypingTable  
+*)
+
+
+(* 11. checkvalidity fn Program
+ 11 ProgramVCheck: Program -> Bool
+fun ProgramVCheck(a,b) =
+     DecListVCheck(a) andalso
+     InstructionVCheck(wholeAbsTypingTable(a))(b)
+*)
+
+fun ProgramVCheck(a,b) =
+     DecListVCheck(a) andalso
+     InstructionVCheck(wholeAbsTypingTable(a))(b)
+;
+
+(*  ****testing part 11, 1-good case, apply to sample Program
+     if false then wrong in (function validity) or (program code)
+
+*)
+val test11_good1 = ProgramVCheck(lucas);
+
+(* ****testing part 11, 1-bad case
+     similar part2 DecListVCheck so  
+     just focus on bad InstructionVCheck - bad body
+
+*)
+val bad_instruction = VE(var_n, BC true);
+val bad_program = (allDeclarations, bad_instruction);
+val test11_bad1 = ProgramVCheck(bad_program);
+
+(*------------End step2 static sementics---------------*)

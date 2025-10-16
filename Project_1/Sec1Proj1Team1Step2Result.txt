@@ -1,0 +1,173 @@
+Standard ML of New Jersey [Version 110.99.8; 32-bit; April 25, 2025]
+- type Integer_Constant = int
+type Boolean_Constant = bool
+datatype Variable = S of string
+datatype Arithmatic_Op = Div | Minus | Plus | Times
+datatype Relational_Op = Eq | Ge | Gt | Le | Lt | Ne
+datatype Boolean_Op = And | Or
+datatype Operator
+  = AOp of Arithmatic_Op
+  | BOp of Boolean_Op
+  | ROp of Relational_Op
+datatype Expression
+  = BC of bool
+  | EEO of Expression * Expression * Operator
+  | IC of int
+  | Var of Variable
+datatype Instruction
+  = IfThenElse of Expression * Instruction * Instruction
+  | Seq of Instruction list
+  | Skip
+  | VE of Variable * Expression
+  | WhileLoop of Expression * Instruction
+datatype Type = TypeBool | TypeInt
+type Declaration = Variable * Type
+type DeclarationList = Declaration list
+type Program = DeclarationList * Instruction
+val var_n = S "n" : Variable
+val var_cur = S "cur" : Variable
+val var_prev1 = S "prev1" : Variable
+val var_prev2 = S "prev2" : Variable
+val var_i = S "i" : Variable
+val var_answer = S "answer" : Variable
+val var_temp = S "temp" : Variable
+val declaration_n = (S "n",TypeInt) : Variable * Type
+val declaration_cur = (S "cur",TypeInt) : Variable * Type
+val declaration_prev1 = (S "prev1",TypeInt) : Variable * Type
+val declaration_prev2 = (S "prev2",TypeInt) : Variable * Type
+val declaration_i = (S "i",TypeInt) : Variable * Type
+val declaration_answer = (S "answer",TypeInt) : Variable * Type
+val allDeclarations =
+  [(S "n",TypeInt),(S "cur",TypeInt),(S "prev1",TypeInt),(S "prev2",TypeInt),
+   (S "i",TypeInt),(S "answer",TypeInt)] : (Variable * Type) list
+val n_equals_0 = EEO (Var (S "n"),IC 0,ROp Eq) : Expression
+val n_equals_1 = EEO (Var (S "n"),IC 1,ROp Eq) : Expression
+val i_lessthan_n = EEO (Var (S "i"),Var (S "n"),ROp Lt) : Expression
+val assign_n_15 = VE (S "n",IC 15) : Instruction
+val assign_answer_1 = VE (S "answer",IC 1) : Instruction
+val assign_answer_2 = VE (S "answer",IC 2) : Instruction
+val assign_i_1 = VE (S "i",IC 1) : Instruction
+val assign_prev1_1 = VE (S "prev1",IC 1) : Instruction
+val assign_prev2_2 = VE (S "prev2",IC 2) : Instruction
+val assign_answer_cur = VE (S "answer",Var (S "cur")) : Instruction
+val assign_prev2_prev1 = VE (S "prev2",Var (S "prev1")) : Instruction
+val assign_prev1_cur = VE (S "prev1",Var (S "cur")) : Instruction
+val add_i_1 = EEO (Var (S "i"),IC 1,AOp Plus) : Expression
+val add_prev1_prev2 = EEO (Var (S "prev1"),Var (S "prev2"),AOp Plus)
+  : Expression
+val ipp = VE (S "i",EEO (Var (S "i"),IC 1,AOp Plus)) : Instruction
+val cur_prev1_plus_prev2 =
+  VE (S "cur",EEO (Var (S "prev1"),Var (S "prev2"),AOp Plus)) : Instruction
+val insideWhile =
+  [VE (S "i",EEO (Var (S "i"),IC 1,AOp Plus)),
+   VE (S "cur",EEO (Var (S "prev1"),Var (S "prev2"),AOp Plus)),
+   VE (S "prev2",Var (S "prev1")),VE (S "prev1",Var (S "cur"))]
+  : Instruction list
+val whileLoop =
+  WhileLoop
+    (EEO (Var (S "i"),Var (S "n"),ROp Lt),
+     Seq
+       [VE (S "i",EEO (Var (S #),IC 1,AOp Plus)),
+        VE (S "cur",EEO (Var (S #),Var (S #),AOp Plus)),
+        VE (S "prev2",Var (S "prev1")),VE (S "prev1",Var (S "cur"))])
+  : Instruction
+val inner_Else =
+  [VE (S "prev2",IC 2),VE (S "prev1",IC 1),
+   WhileLoop
+     (EEO (Var (S "i"),Var (S "n"),ROp Lt),
+      Seq
+        [VE (S "i",EEO (Var #,IC #,AOp #)),
+         VE (S "cur",EEO (Var #,Var #,AOp #)),VE (S "prev2",Var (S "prev1")),
+         VE (S "prev1",Var (S "cur"))]),VE (S "answer",Var (S "cur"))]
+  : Instruction list
+val inner_ifThenElse =
+  IfThenElse
+    (EEO (Var (S "n"),IC 1,ROp Eq),VE (S "answer",IC 1),
+     Seq
+       [VE (S "prev2",IC 2),VE (S "prev1",IC 1),
+        WhileLoop
+          (EEO (Var (S #),Var (S #),ROp Lt),
+           Seq [VE (#,#),VE (#,#),VE (#,#),VE (#,#)]),
+        VE (S "answer",Var (S "cur"))]) : Instruction
+val outer_Else =
+  [VE (S "i",IC 1),
+   IfThenElse
+     (EEO (Var (S "n"),IC 1,ROp Eq),VE (S "answer",IC 1),
+      Seq
+        [VE (S "prev2",IC 2),VE (S "prev1",IC 1),
+         WhileLoop (EEO (Var #,Var #,ROp #),Seq [VE #,VE #,VE #,VE #]),
+         VE (S "answer",Var (S "cur"))])] : Instruction list
+val outer_ifThenElse =
+  IfThenElse
+    (EEO (Var (S "n"),IC 0,ROp Eq),VE (S "answer",IC 2),
+     Seq
+       [VE (S "i",IC 1),
+        IfThenElse
+          (EEO (Var (S #),IC 1,ROp Eq),VE (S "answer",IC 1),
+           Seq [VE (#,#),VE (#,#),WhileLoop (#,#),VE (#,#)])]) : Instruction
+val allInstructions =
+  [VE (S "n",IC 15),
+   IfThenElse
+     (EEO (Var (S "n"),IC 0,ROp Eq),VE (S "answer",IC 2),
+      Seq
+        [VE (S "i",IC 1),
+         IfThenElse
+           (EEO (Var #,IC #,ROp #),VE (S #,IC #),
+            Seq [VE #,VE #,WhileLoop #,VE #])])] : Instruction list
+val lucas =
+  ([(S "n",TypeInt),(S "cur",TypeInt),(S "prev1",TypeInt),(S "prev2",TypeInt),
+    (S "i",TypeInt),(S "answer",TypeInt)],
+   Seq
+     [VE (S "n",IC 15),
+      IfThenElse
+        (EEO (Var (S "n"),IC 0,ROp Eq),VE (S "answer",IC 2),
+         Seq [VE (S #,IC #),IfThenElse (EEO #,VE #,Seq #)])])
+  : (Variable * Type) list * Instruction
+stdIn:181.9-181.11 Warning: calling polyEqual
+val NoDuplicate = fn : (Variable * Type) list -> Variable -> bool
+val DecListVCheck = fn : DeclarationList -> bool
+val test1 = false : bool
+val Gtest1 = true : bool
+val declarationslist_bad =
+  [(S "n",TypeInt),(S "n",TypeInt),(S "cur",TypeInt),(S "prev1",TypeInt),
+   (S "prev2",TypeInt),(S "i",TypeInt),(S "answer",TypeInt)]
+  : (Variable * Type) list
+val Btest1 = false : bool
+datatype TypeValue = DeclaredBool | DeclaredInt | NoDeclaration
+type AbsTypingTable = Variable -> TypeValue
+val AbsTypingTableNoDeclaration = fn : Variable -> TypeValue
+val Gtest5_1 = NoDeclaration : TypeValue
+stdIn:262.31 Warning: calling polyEqual
+stdIn:265.30 Warning: calling polyEqual
+val NewAbsTypingTable = fn
+  : AbsTypingTable -> Variable * Type -> Variable -> TypeValue
+val myAbsTypingTable1 = fn : Variable -> TypeValue
+val it = DeclaredInt : TypeValue
+val it = NoDeclaration : TypeValue
+val var_bb = S "bb" : Variable
+val declaration_bb = (S "bb",TypeBool) : Variable * Type
+val myAbsTypingTable2 = fn : Variable -> TypeValue
+val it = DeclaredInt : TypeValue
+val it = DeclaredBool : TypeValue
+val it = NoDeclaration : TypeValue
+val wholeAbsTypingTable = fn : DeclarationList -> AbsTypingTable
+val myAbsTypingTable = fn : AbsTypingTable
+val it = DeclaredInt : TypeValue
+val it = DeclaredInt : TypeValue
+val it = DeclaredInt : TypeValue
+val it = DeclaredInt : TypeValue
+val it = DeclaredInt : TypeValue
+val it = DeclaredInt : TypeValue
+val it = NoDeclaration : TypeValue
+val DetermineExpType = fn : Expression -> AbsTypingTable -> TypeValue
+val ExpressionVCheck = fn : Expression -> AbsTypingTable -> bool
+val InstructionVCheck = fn : AbsTypingTable -> Instruction -> bool
+val ProgramVCheck = fn : DeclarationList * Instruction -> bool
+val test11_good1 = true : bool
+val bad_instruction = VE (S "n",BC true) : Instruction
+val bad_program =
+  ([(S "n",TypeInt),(S "cur",TypeInt),(S "prev1",TypeInt),(S "prev2",TypeInt),
+    (S "i",TypeInt),(S "answer",TypeInt)],VE (S "n",BC true))
+  : (Variable * Type) list * Instruction
+val test11_bad1 = false : bool
+- 
