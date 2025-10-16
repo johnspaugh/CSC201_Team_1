@@ -123,7 +123,50 @@ val allInstructions = [assign_n_15, outer_ifThenElse]
 (* The Program LUCAS*)
 val lucas = (allDeclarations, Seq allInstructions)
 
-(*Step 2*)
+
+(* -------------------
+cpp file
+
+#include <cstdlib>
+#include <iomanip>
+#include <iostream>
+
+int main(){ //int argc, char *argv[]){
+     int n;
+     int cur;
+     int prev1;
+     int prev2;
+     int i;
+     int answer;
+
+     n=15;
+
+     if(n == 0){
+          answer = 2;
+     }else{
+          i=1;
+          if(n ==1){
+               answer=1;
+          }else{
+               prev2 =2;
+               prev1 =1;
+               while (i < n){
+                    i++; // i = i +1;
+                    cur = prev1 + prev2;
+                    prev2 = prev1;
+                    prev1 = cur;
+               }
+               answer = cur;
+          }
+     }
+     std::cout << "Answer: " << answer << std::endl;
+     return 0;
+}
+
+---------------------------*)
+
+(*------------step2 static semantics---------------*)
+(* sml<Sec1Proj1Team1Step2.ml>Sec1Proj1Team1Step2Result.txt   *)
 
 fun NoDuplicate((a: Variable, b: Type):: decListTail)(c: Variable) = (a <> c) andalso NoDuplicate decListTail c
   | NoDuplicate [] c = true;
@@ -200,56 +243,124 @@ myAbsTypingTable(var_i);
 myAbsTypingTable(var_answer);
 myAbsTypingTable(var_temp);
 
-(* 8 DetermineExpType: Expression -> AbsTypingTable -> TypeValue
-fun DetermineExpType(EDC1(x)) = (fn(y:AbsTypingTable)=>y(x)) |
-     DetermineExpType(EDC2=(x)) => (fn(y:AbsTypingTable) => DeclaredInt) |
-     DetermineExpType(EDC3=(x)) => (fn(y:AbsTypingTable) => DeclaredBool) |
-     DetermineExpType(EDC4=(x1,x2,ODC1(opa)))=>
-                              (fn(y:AbsTypingTable)=>DeclaredInt) |
-     DetermineExpType(EDC5=(x1,x2,ODC1(opa)))=>
-                              (fn(y:AbsTypingTable)=>DeclaredBool) |
-     DetermineExpType(EDC6=(x1,x2,ODC1(opa)))=>
-                              (fn(y:AbsTypingTable)=>DeclaredBool) |
-     ------realational--boolean
+(* 8 DetermineExpType: Expression -> AbsTypingTable -> TypeValue*)
+
+fun DetermineExpType(Var(x)) = (fn(y:AbsTypingTable) => y(x)) |
+     DetermineExpType(IC(x)) = (fn(y:AbsTypingTable) => DeclaredInt) |
+     DetermineExpType(BC(x)) = (fn(y:AbsTypingTable) => DeclaredBool) |
+     DetermineExpType(EEO(x1, x2, AOp(opa) ) ) =
+                              (fn(y:AbsTypingTable) => DeclaredInt) |
+     DetermineExpType(EEO(x1, x2, ROp(opa) ) ) =
+                              (fn(y:AbsTypingTable) => DeclaredBool) |
+     DetermineExpType(EEO(x1, x2, BOp(opa) ) ) =
+                              (fn(y:AbsTypingTable) => DeclaredBool);
+
+(* 9 ExpressionVCheck: Expression -> AbsTypingTable -> Bool*)
+
+fun ExpressionVCheck(Var(a)) = (fn(b:AbsTypingTable) => b(a) <> NoDeclaration) |
+     ExpressionVCheck(IC(a)) = (fn(b:AbsTypingTable) => true) |
+     ExpressionVCheck(BC(a)) = (fn(b:AbsTypingTable) => true) |
+     ExpressionVCheck(EEO(a1, a2, AOp(opa))) =
+          (fn(b:AbsTypingTable) => ExpressionVCheck(a1)(b)  andalso
+          (DetermineExpType(a1)(b) = DeclaredInt ) andalso
+          ExpressionVCheck(a2)(b) andalso  
+          (DetermineExpType(a2)(b) = DeclaredInt))  | 
+     ExpressionVCheck(EEO(a1, a2, ROp(opa))) =
+          (fn(b:AbsTypingTable) => 
+               ExpressionVCheck(a1)(b)  andalso
+         (DetermineExpType(a1)(b) = DeclaredInt ) andalso
+          ExpressionVCheck(a2)(b) andalso  
+          (DetermineExpType(a2)(b) = DeclaredInt))  | 
+     ExpressionVCheck(EEO(a1, a2, BOp(opa))) =
+          (fn(b:AbsTypingTable) => 
+               ExpressionVCheck(a1)(b)  andalso
+          (DetermineExpType(a1)(b) = DeclaredBool ) andalso
+          ExpressionVCheck(a2)(b) andalso  
+          (DetermineExpType(a2)(b) = DeclaredBool));
+
+(*Test 9*)
+
+(* 10 checkvalidity fn Instruction, 6 patterns skp, var*exp, ifthenelse, whileloop, list empty, list nonempty
+10. InstructionVCheck: AbsTypingTable -> Instruction -> Bool
+val rec InstructionVCheck =
+     (fn(a:AbsTypingTable) =>
+          (fn (Skip) => true ) |
+               (IDC2(x, y)) => 
+                    (a(x) = DetermineExpType(y)(a) ) andalso
+                    (a(x) <> NoDeclaration) andalso
+                    ExpressionVCheck(y)(a) |
+          ----IfThenElse----
+               (IDC3(x,y,z)) =>
+                    (DetermineExpType(x)(a) = DeclaredBool) andalso
+                    ExpressionVCheck(x)(a) andalso
+                    InstructionVCheck(a)(y) andalso InstructionVCheck(a)(z) |
+          -----whileloop-----
+               (IDC4(x,y)) => 
+                    (DetermineExpType(x)(a) = DeclaredBool) andalso
+                    ExpressionVCheck(x)(a) andalso
+                    InstructionVCheck(a)(y) |
+          -----list empty -----
+               (IDC5([])) => true |
+               (IDC5(InstListHead :: InstListTail)) =>
+                    InstructionVCheck(a)(InstListHead) andalso
+                    InstructionVCheck(a)(IDC5(InstListTail))     
+     )
+
 *)
 
-(* -------------------
-cpp file
+val rec InstructionVCheck =
+     (fn (a:AbsTypingTable) =>
+          (fn (Skip) => true  |
+          ( VE(x, y)) => 
+               (a(x) = DetermineExpType(y)(a) ) andalso
+               (a(x) <> NoDeclaration) andalso
+               ExpressionVCheck(y)(a)   | 
+          ( IfThenElse(x,y,z)) =>
+               (DetermineExpType(x)(a) = DeclaredBool) andalso
+               ExpressionVCheck(x)(a) andalso
+               InstructionVCheck(a)(y) andalso InstructionVCheck(a)(z)  |
+          ( WhileLoop(x,y)) => 
+               (DetermineExpType(x)(a) = DeclaredBool) andalso
+               ExpressionVCheck(x)(a) andalso
+               InstructionVCheck(a)(y)  |
+          ( Seq([])) => true  |
+          ( Seq(InstListHead :: InstListTail))  =>
+               InstructionVCheck(a)(InstListHead) andalso
+               InstructionVCheck(a)(Seq(InstListTail)) 
+          )
+     );
 
-#include <cstdlib>
-#include <iomanip>
-#include <iostream>
+(*  ****testing part 10, 4-good cases 
+          (no skp, no []) 
+*)
 
-int main(){ //int argc, char *argv[]){
-     int n;
-     int cur;
-     int prev1;
-     int prev2;
-     int i;
-     int answer;
+(* ****tesing part 10, 1-bad case
+          bad assignment
+          Importatnt!
+          use a a good AbsTypingTable  
+*)
 
-     n=15;
+(* 11. checkvalidity fn Program
+ 11 ProgramVCheck: Program -> Bool
+fun ProgramVCheck(a,b) =
+     DecListVCheck(a) andalso
+     InstructionVCheck(wholeAbsTypingTable(a))(b)
+*)
 
-     if(n == 0){
-          answer = 2;
-     }else{
-          i=1;
-          if(n ==1){
-               answer=1;
-          }else{
-               prev2 =2;
-               prev1 =1;
-               while (i < n){
-                    i++; // i = i +1;
-                    cur = prev1 + prev2;
-                    prev2 = prev1;
-                    prev1 = cur;
-               }
-               answer = cur;
-          }
-     }
-     std::cout << "Answer: " << answer << std::endl;
-     return 0;
-}
+fun ProgramVCheck(a,b) =
+     DecListVCheck(a) andalso
+     InstructionVCheck(wholeAbsTypingTable(a))(b)
+;
 
----------------------------*)
+(*  ****testing part 11, 1-good case, apply to sample Program
+     if false then wrong in (function validity) or (program code)
+
+*)
+
+(* ****testing part 11, 1-bad case
+     similar part2 DecListVCheck so  
+     just focus on bad InstructionVCheck - bad body
+
+*)
+
+(*------------End step2 static sementics---------------*)
