@@ -161,6 +161,14 @@ val it = DeclaredInt : TypeValue
 val it = NoDeclaration : TypeValue
 val DetermineExpType = fn : Expression -> AbsTypingTable -> TypeValue
 val ExpressionVCheck = fn : Expression -> AbsTypingTable -> bool
+val it = fn : AbsTypingTable -> bool
+val it = fn : AbsTypingTable -> bool
+val i_lessthan_n = EEO (Var (S "i"),Var (S "n"),ROp Lt) : Expression
+val i_lessthan_n = EEO (Var (S "i"),Var (S "n"),ROp Ge) : Expression
 val InstructionVCheck = fn : AbsTypingTable -> Instruction -> bool
-val ProgramVCheck = fn : DeclarationList * Instruction -> bool
+stdIn:451.5-451.58 Error: operator and operand do not agree [tycon mismatch]
+  operator domain: DeclarationList
+  operand:         Instruction
+  in expression:
+    wholeAbsTypingTable assign_n_15
 - 

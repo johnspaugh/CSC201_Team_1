@@ -381,6 +381,10 @@ be realistic a>b, a=bb
 no (a+b), 
 at least once yes ( )+( )
 *)
+ExpressionVCheck(n_equals_0);
+ExpressionVCheck(n_equals_1);          
+val i_lessthan_n = EEO (Var var_i, Var var_n, ROp Lt);
+val i_lessthan_n = EEO (Var var_i, Var var_n, ROp Ge);
 
 (* *****testing part 9 1-bad case
 Importatnt! to do one, use a good AbsTypingTable 
@@ -438,14 +442,25 @@ val rec InstructionVCheck =
 
 (*  ****testing part 10, 4-good cases 
           (no skp, no []) 
+          myAbsTypingTable(var_n);
+InstructionVCheck(inner_ifThenElse);
+InstructionVCheck(insideWhile);
+InstructionVCheck(allInstructions);
+
 *)
+val myAbsTypingTableVE = wholeAbsTypingTable(assign_n_15);
+myAbsTypingTableVE = wholeAbsTypingTable(inner_ifThenElse);
+myAbsTypingTableVE = wholeAbsTypingTable(insideWhile);
+myAbsTypingTableVE = wholeAbsTypingTable(allInstructions);
+InstructionVCheck(myAbsTypingTableVE);
 
 (* ****tesing part 10, 1-bad case
           bad assignment
           Importatnt!
           use a a good AbsTypingTable  
+          
+InstructionVCheck( );
 *)
-
 
 (* 11. checkvalidity fn Program
  11 ProgramVCheck: Program -> Bool
