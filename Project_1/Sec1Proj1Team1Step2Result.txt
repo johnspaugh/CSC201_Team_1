@@ -161,14 +161,34 @@ val it = DeclaredInt : TypeValue
 val it = NoDeclaration : TypeValue
 val DetermineExpType = fn : Expression -> AbsTypingTable -> TypeValue
 val ExpressionVCheck = fn : Expression -> AbsTypingTable -> bool
-val it = fn : AbsTypingTable -> bool
-val it = fn : AbsTypingTable -> bool
-val i_lessthan_n = EEO (Var (S "i"),Var (S "n"),ROp Lt) : Expression
-val i_lessthan_n = EEO (Var (S "i"),Var (S "n"),ROp Ge) : Expression
+val and_t_t = EEO (BC true,BC true,BOp And) : Expression
+val nExpression = Var (S "n") : Expression
+val myExpressionVCheck = true : bool
+val iCExpression = IC 0 : Expression
+val myExpressionVCheck = true : bool
+val bCExpression = BC false : Expression
+val myExpressionVCheck = true : bool
+val myExpressionVCheck = true : bool
+val myExpressionVCheck = true : bool
+val myExpressionVCheck = true : bool
+val minus_5_6 = EEO (IC 5,IC 6,AOp Minus) : Expression
+val add_8_t = EEO (IC 8,BC true,AOp Plus) : Expression
+val minus_56_8t =
+  EEO (EEO (IC 5,IC 6,AOp Minus),EEO (IC 8,BC true,AOp Plus),AOp Minus)
+  : Expression
+val myExpressionVCheck = false : bool
 val InstructionVCheck = fn : AbsTypingTable -> Instruction -> bool
-stdIn:451.5-451.58 Error: operator and operand do not agree [tycon mismatch]
-  operator domain: DeclarationList
-  operand:         Instruction
-  in expression:
-    wholeAbsTypingTable assign_n_15
+val ItestGood_1 = true : bool
+val ItestGood_2 = true : bool
+val ItestGood_3 = true : bool
+val ItestGood_4 = true : bool
+val badInstruction = VE (S "n",BC true) : Instruction
+val ItestBad_1 = false : bool
+val ProgramVCheck = fn : DeclarationList * Instruction -> bool
+val test11_good1 = true : bool
+val bad_program =
+  ([(S "n",TypeInt),(S "cur",TypeInt),(S "prev1",TypeInt),(S "prev2",TypeInt),
+    (S "i",TypeInt),(S "answer",TypeInt)],VE (S "n",BC true))
+  : (Variable * Type) list * Instruction
+val test11_bad1 = false : bool
 - 

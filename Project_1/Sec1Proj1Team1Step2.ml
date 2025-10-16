@@ -375,20 +375,30 @@ fun ExpressionVCheck(Var(a)) = (fn(b:AbsTypingTable) => b(a) <> NoDeclaration) |
           ExpressionVCheck(a2)(b) andalso  
           (DetermineExpType(a2)(b) = DeclaredBool));
 
-(* ****testing part 9, 6-good cases
-EDC4(a1,a2, ODC1(opa))
-be realistic a>b, a=bb
-no (a+b), 
-at least once yes ( )+( )
-*)
-ExpressionVCheck(n_equals_0);
-ExpressionVCheck(n_equals_1);          
-val i_lessthan_n = EEO (Var var_i, Var var_n, ROp Lt);
-val i_lessthan_n = EEO (Var var_i, Var var_n, ROp Ge);
+(* ****testing part 9, 6-good cases *)
+val and_t_t = EEO (BC true, BC true, BOp And);
+
+val nExpression = Var (var_n);
+val myExpressionVCheck = ExpressionVCheck(nExpression)(myAbsTypingTable);
+
+val iCExpression = IC (0);
+val myExpressionVCheck = ExpressionVCheck(iCExpression)(myAbsTypingTable);
+
+val bCExpression = BC (false);
+val myExpressionVCheck = ExpressionVCheck(bCExpression)(myAbsTypingTable);
+
+val myExpressionVCheck = ExpressionVCheck(add_i_1)(myAbsTypingTable);
+val myExpressionVCheck = ExpressionVCheck(i_lessthan_n)(myAbsTypingTable);
+val myExpressionVCheck = ExpressionVCheck(and_t_t)(myAbsTypingTable);;
 
 (* *****testing part 9 1-bad case
 Importatnt! to do one, use a good AbsTypingTable 
 *)
+val minus_5_6 = EEO (IC 5, IC 6, AOp Minus);
+val add_8_t = EEO (IC 8, BC true, AOp Plus);
+val minus_56_8t = EEO (minus_5_6, add_8_t, AOp Minus);
+val myExpressionVCheck = ExpressionVCheck(minus_56_8t)(myAbsTypingTable);
+
 
 (* 10 checkvalidity fn Instruction, 6 patterns skp, var*exp, ifthenelse, whileloop, list empty, list nonempty
 10. InstructionVCheck: AbsTypingTable -> Instruction -> Bool
@@ -441,26 +451,20 @@ val rec InstructionVCheck =
 );
 
 (*  ****testing part 10, 4-good cases 
-          (no skp, no []) 
-          myAbsTypingTable(var_n);
-InstructionVCheck(inner_ifThenElse);
-InstructionVCheck(insideWhile);
-InstructionVCheck(allInstructions);
-
+          (no skp, no [])  
 *)
-val myAbsTypingTableVE = wholeAbsTypingTable(assign_n_15);
-myAbsTypingTableVE = wholeAbsTypingTable(inner_ifThenElse);
-myAbsTypingTableVE = wholeAbsTypingTable(insideWhile);
-myAbsTypingTableVE = wholeAbsTypingTable(allInstructions);
-InstructionVCheck(myAbsTypingTableVE);
+val ItestGood_1 = InstructionVCheck myAbsTypingTable cur_prev1_plus_prev2
+val ItestGood_2 = InstructionVCheck myAbsTypingTable inner_ifThenElse
+val ItestGood_3 = InstructionVCheck myAbsTypingTable ipp
+val ItestGood_4 = InstructionVCheck myAbsTypingTable (Seq inner_Else)
 
 (* ****tesing part 10, 1-bad case
           bad assignment
           Importatnt!
           use a a good AbsTypingTable  
-          
-InstructionVCheck( );
 *)
+val badInstruction   = VE (var_n, BC true)  
+val ItestBad_1 = InstructionVCheck myAbsTypingTable badInstruction
 
 (* 11. checkvalidity fn Program
  11 ProgramVCheck: Program -> Bool
@@ -476,13 +480,14 @@ fun ProgramVCheck(a,b) =
 
 (*  ****testing part 11, 1-good case, apply to sample Program
      if false then wrong in (function validity) or (program code)
-
 *)
+val test11_good1 = ProgramVCheck(lucas);
 
 (* ****testing part 11, 1-bad case
      similar part2 DecListVCheck so  
      just focus on bad InstructionVCheck - bad body
-
 *)
+val bad_program = (allDeclarations, badInstruction);
+val test11_bad1 = ProgramVCheck(bad_program);
 
 (*------------End step2 static sementics---------------*)
