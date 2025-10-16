@@ -1,7 +1,8 @@
 (* CSC201, Section 1, TEAM 1, 
     John Spaugh,
     Taro Kumagai,
-    Niravkumar Tandel *)
+    Niravkumar Tandel,
+    Charles Thomas *)
 
 (*---- Sec1Proj1Team1Step1 ----------------------*)
 
@@ -179,9 +180,8 @@ val rec DecListVCheck =
      ) ;
 
 (*Good testing step 2, input allDeclarations list with int into DecListVCheck
-test1 expected false, Gtest1 expected true*)
+Gtest1 expected true*)
 
-val test1 = NoDuplicate(allDeclarations )(var_answer); 
 val Gtest1 = DecListVCheck(allDeclarations);
 
 (* Bad testing step 2, New List using allDeclarations adding on a duplicate n to the head
@@ -199,9 +199,6 @@ type AbsTypingTable = Variable -> TypeValue
 
 (* 5 *)
 val AbsTypingTableNoDeclaration = (fn (x:Variable) => NoDeclaration)    
-
-(* ***Testing 5 one apply for variables for the declaration of all apply *)
-val Gtest5_1 = AbsTypingTableNoDeclaration(var_answer);
 
 (* 6 *)             
 fun NewAbsTypingTable(oldatt: AbsTypingTable)(a:Variable, TypeBool)
@@ -244,7 +241,6 @@ myAbsTypingTable(var_answer);
 myAbsTypingTable(var_temp);
 
 (* 8 DetermineExpType: Expression -> AbsTypingTable -> TypeValue*)
-
 fun DetermineExpType(Var(x)) = (fn(y:AbsTypingTable) => y(x)) |
      DetermineExpType(IC(x)) = (fn(y:AbsTypingTable) => DeclaredInt) |
      DetermineExpType(BC(x)) = (fn(y:AbsTypingTable) => DeclaredBool) |
@@ -256,7 +252,6 @@ fun DetermineExpType(Var(x)) = (fn(y:AbsTypingTable) => y(x)) |
                               (fn(y:AbsTypingTable) => DeclaredBool);
 
 (* 9 ExpressionVCheck: Expression -> AbsTypingTable -> Bool*)
-
 fun ExpressionVCheck(Var(a)) = (fn(b:AbsTypingTable) => b(a) <> NoDeclaration) |
      ExpressionVCheck(IC(a)) = (fn(b:AbsTypingTable) => true) |
      ExpressionVCheck(BC(a)) = (fn(b:AbsTypingTable) => true) |
@@ -278,36 +273,31 @@ fun ExpressionVCheck(Var(a)) = (fn(b:AbsTypingTable) => b(a) <> NoDeclaration) |
           ExpressionVCheck(a2)(b) andalso  
           (DetermineExpType(a2)(b) = DeclaredBool));
 
-(*Test 9*)
+(*Test 9 Good in order*)
+val and_t_t = EEO (BC true, BC true, BOp And);
 
-(* 10 checkvalidity fn Instruction, 6 patterns skp, var*exp, ifthenelse, whileloop, list empty, list nonempty
-10. InstructionVCheck: AbsTypingTable -> Instruction -> Bool
-val rec InstructionVCheck =
-     (fn(a:AbsTypingTable) =>
-          (fn (Skip) => true ) |
-               (IDC2(x, y)) => 
-                    (a(x) = DetermineExpType(y)(a) ) andalso
-                    (a(x) <> NoDeclaration) andalso
-                    ExpressionVCheck(y)(a) |
-          ----IfThenElse----
-               (IDC3(x,y,z)) =>
-                    (DetermineExpType(x)(a) = DeclaredBool) andalso
-                    ExpressionVCheck(x)(a) andalso
-                    InstructionVCheck(a)(y) andalso InstructionVCheck(a)(z) |
-          -----whileloop-----
-               (IDC4(x,y)) => 
-                    (DetermineExpType(x)(a) = DeclaredBool) andalso
-                    ExpressionVCheck(x)(a) andalso
-                    InstructionVCheck(a)(y) |
-          -----list empty -----
-               (IDC5([])) => true |
-               (IDC5(InstListHead :: InstListTail)) =>
-                    InstructionVCheck(a)(InstListHead) andalso
-                    InstructionVCheck(a)(IDC5(InstListTail))     
-     )
+val nExpression = Var (var_n);
+val myExpressionVCheck = ExpressionVCheck(nExpression)(myAbsTypingTable);
 
-*)
+val iCExpression = IC (0);
+val myExpressionVCheck = ExpressionVCheck(iCExpression)(myAbsTypingTable);
 
+val bCExpression = BC (false);
+val myExpressionVCheck = ExpressionVCheck(bCExpression)(myAbsTypingTable);
+
+val myExpressionVCheck = ExpressionVCheck(add_i_1)(myAbsTypingTable);
+val myExpressionVCheck = ExpressionVCheck(i_lessthan_n)(myAbsTypingTable);
+val myExpressionVCheck = ExpressionVCheck(and_t_t)(myAbsTypingTable);
+
+
+(*Test 9 Bad (5 - 6) - (8 + t)*)
+val minus_5_6 = EEO (IC 5, IC 6, AOp Minus);
+val add_8_t = EEO (IC 8, BC true, AOp Plus);
+val minus_56_8t = EEO (minus_5_6, add_8_t, AOp Minus);
+val myExpressionVCheck = ExpressionVCheck(minus_56_8t)(myAbsTypingTable);
+
+
+(*10 InstructionVCheck: AbsTypingTable -> Instruction -> Bool*)
 val rec InstructionVCheck =
      (fn (a:AbsTypingTable) =>
           (fn (Skip) => true  |
@@ -330,7 +320,6 @@ val rec InstructionVCheck =
           )
      );
 
-
 (* ****testing part 10, 4-good cases **** *)
 val ItestGood_1 = InstructionVCheck myAbsTypingTable cur_prev1_plus_prev2
 val ItestGood_2 = InstructionVCheck myAbsTypingTable inner_ifThenElse
@@ -338,36 +327,20 @@ val ItestGood_3 = InstructionVCheck myAbsTypingTable ipp
 val ItestGood_4 = InstructionVCheck myAbsTypingTable (Seq inner_Else)
 
 (* ****testing part 10, 1-bad case**** *)
-val badInstrucution   = VE (var_n, BC true)  
-val ItestBad_1 = InstructionVCheck myAbsTypingTable badInstrcution
+val badInstruction   = VE (var_n, BC true)  
+val ItestBad_1 = InstructionVCheck myAbsTypingTable badInstruction
 
-
-
-(* 11. checkvalidity fn Program
- 11 ProgramVCheck: Program -> Bool
+(* 11. checkvalidity fn Program*)
 fun ProgramVCheck(a,b) =
      DecListVCheck(a) andalso
-     InstructionVCheck(wholeAbsTypingTable(a))(b)
-*)
-
-fun ProgramVCheck (a,b) =
-     DecListVCheck(a) andalso
-     InstructionVCheck(wholeAbsTypingTable(a))(b)
-;
+     InstructionVCheck(wholeAbsTypingTable(a))(b);
 
 (*  ****testing part 11, 1-good case, apply to sample Program
-     if false then wrong in (function validity) or (program code)
+     if false then wrong in (function validity) or (program code)*)
+val test11_good1 = ProgramVCheck(lucas);
 
-*)
-
-
-
-
-
-(* ****testing part 11, 1-bad case
-     similar part2 DecListVCheck so  
-     just focus on bad InstructionVCheck - bad body
-
-*)
+(* ****testing part 11, 1-bad case*)
+val bad_program = (allDeclarations, badInstruction);
+val test11_bad1 = ProgramVCheck(bad_program);
 
 (*------------End step2 static sementics---------------*)
