@@ -24,6 +24,7 @@ datatype Type = TypeBool | TypeInt
 type Declaration = Variable * Type
 type DeclarationList = Declaration list
 type Program = DeclarationList * Instruction
+stdIn:172.73-172.75 Warning: calling polyEqual
 val var_n = S "n" : Variable
 val var_cur = S "cur" : Variable
 val var_prev1 = S "prev1" : Variable
@@ -123,4 +124,69 @@ val lucas =
         (EEO (Var (S "n"),IC 0,ROp Eq),VE (S "answer",IC 2),
          Seq [VE (S #,IC #),IfThenElse (EEO #,VE #,Seq #)])])
   : (Variable * Type) list * Instruction
+val NoDuplicate = fn : (Variable * Type) list -> Variable -> bool
+val DecListVCheck = fn : DeclarationList -> bool
+val Gtest1 = true : bool
+val declarationslist_bad =
+  [(S "n",TypeInt),(S "n",TypeInt),(S "cur",TypeInt),(S "prev1",TypeInt),
+   (S "prev2",TypeInt),(S "i",TypeInt),(S "answer",TypeInt)]
+  : (Variable * Type) list
+val Btest1 = false : bool
+datatype TypeValue = DeclaredBool | DeclaredInt | NoDeclaration
+stdIn:205.31 Warning: calling polyEqual
+stdIn:208.30 Warning: calling polyEqual
+type AbsTypingTable = Variable -> TypeValue
+val AbsTypingTableNoDeclaration = fn : Variable -> TypeValue
+val NewAbsTypingTable = fn
+  : AbsTypingTable -> Variable * Type -> Variable -> TypeValue
+val myAbsTypingTable1 = fn : Variable -> TypeValue
+val it = DeclaredInt : TypeValue
+val it = NoDeclaration : TypeValue
+val var_bb = S "bb" : Variable
+val declaration_bb = (S "bb",TypeBool) : Variable * Type
+val myAbsTypingTable2 = fn : Variable -> TypeValue
+val it = DeclaredInt : TypeValue
+val it = DeclaredBool : TypeValue
+val it = NoDeclaration : TypeValue
+val wholeAbsTypingTable = fn : DeclarationList -> AbsTypingTable
+val myAbsTypingTable = fn : AbsTypingTable
+val it = DeclaredInt : TypeValue
+val it = DeclaredInt : TypeValue
+val it = DeclaredInt : TypeValue
+val it = DeclaredInt : TypeValue
+val it = DeclaredInt : TypeValue
+val it = DeclaredInt : TypeValue
+val it = NoDeclaration : TypeValue
+val DetermineExpType = fn : Expression -> AbsTypingTable -> TypeValue
+val ExpressionVCheck = fn : Expression -> AbsTypingTable -> bool
+val and_t_t = EEO (BC true,BC true,BOp And) : Expression
+val nExpression = Var (S "n") : Expression
+val myExpressionVCheck = true : bool
+val iCExpression = IC 0 : Expression
+val myExpressionVCheck = true : bool
+val bCExpression = BC false : Expression
+val myExpressionVCheck = true : bool
+val myExpressionVCheck = true : bool
+val myExpressionVCheck = true : bool
+val myExpressionVCheck = true : bool
+val minus_5_6 = EEO (IC 5,IC 6,AOp Minus) : Expression
+val add_8_t = EEO (IC 8,BC true,AOp Plus) : Expression
+val minus_56_8t =
+  EEO (EEO (IC 5,IC 6,AOp Minus),EEO (IC 8,BC true,AOp Plus),AOp Minus)
+  : Expression
+val myExpressionVCheck = false : bool
+val InstructionVCheck = fn : AbsTypingTable -> Instruction -> bool
+val ItestGood_1 = true : bool
+val ItestGood_2 = true : bool
+val ItestGood_3 = true : bool
+val ItestGood_4 = true : bool
+val badInstruction = VE (S "n",BC true) : Instruction
+val ItestBad_1 = false : bool
+val ProgramVCheck = fn : DeclarationList * Instruction -> bool
+val test11_good1 = true : bool
+val bad_program =
+  ([(S "n",TypeInt),(S "cur",TypeInt),(S "prev1",TypeInt),(S "prev2",TypeInt),
+    (S "i",TypeInt),(S "answer",TypeInt)],VE (S "n",BC true))
+  : (Variable * Type) list * Instruction
+val test11_bad1 = false : bool
 
