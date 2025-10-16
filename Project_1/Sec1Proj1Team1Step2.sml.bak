@@ -330,7 +330,6 @@ val rec InstructionVCheck =
           )
      );
 
-
 (* ****testing part 10, 4-good cases **** *)
 val ItestGood_1 = InstructionVCheck myAbsTypingTable cur_prev1_plus_prev2
 val ItestGood_2 = InstructionVCheck myAbsTypingTable inner_ifThenElse

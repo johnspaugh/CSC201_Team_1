@@ -162,4 +162,11 @@ val it = NoDeclaration : TypeValue
 val DetermineExpType = fn : Expression -> AbsTypingTable -> TypeValue
 val ExpressionVCheck = fn : Expression -> AbsTypingTable -> bool
 val InstructionVCheck = fn : AbsTypingTable -> Instruction -> bool
+val ItestGood_1 = true : bool
+val ItestGood_2 = true : bool
+val ItestGood_3 = true : bool
+val ItestGood_4 = true : bool
+val badInstrcution = VE (S "n",BC true) : Instruction
+val ItestBad_1 = false : bool
 val ProgramVCheck = fn : DeclarationList * Instruction -> bool
+- 
