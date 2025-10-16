@@ -208,11 +208,12 @@ val AbsTypingTableNoDeclaration = (fn (x:Variable) => NoDeclaration)
 (*NewAbsTypingTable: AbsTypingTable --> Declaration --> AbsTypingTable*)
           (* old    new   *)
 fun NewAbsTypingTable (oldatt:AbsTypingTable) (a:Variable, TypeBool)
-      =(fn (b:Variable) => if b = a then DeclaredBool
+      = (fn (b:Variable) => if b = a then DeclaredBool
                                     else DeclaredInt) |
      NewAbsTypingTable (oldatt:AbsTypingTable) (a:Variable, TypeInt)
-      =(fn(b:Variable) => if b = a then DeclaredInt
+      = (fn (b:Variable) => if b = a then DeclaredInt
                                     else oldatt(b))
+
 
                     
 (* ****Testing step2 *)
@@ -228,15 +229,30 @@ val myAbsTypingTable2 = NewAbsTypingTable(myAbsTypingTable1)
 (* 7 *)
 (* wholeAbsTypingTable: DeclarationList --> AbsTypingTable *)
 
-val rec wholeAbsTypingTable =
-  fn (decListHead :: decListTail : DeclarationList) =>
-       NewAbsTypingTable (wholeAbsTypingTable decListTail) decListHead
-   | [] => AbsTypingTableNoDeclaration
+val rec wholeAbsTypingTable = fn (decListHead :: decListTail : DeclarationList) =>
+    NewAbsTypingTable (wholeAbsTypingTable decListTail) decListHead
+    | [] => AbsTypingTableNoDeclaration
 
 
 
 (* ***Testing *)
 
-    
+(* 8 *)
+
+fun DetermineExpType (EDC1 (x)) = (fn (y:AbsTypingTable) => y(x)) |
+        DetermineExpType (EDC2 (x)) = (fn (y:AbsTypingTable) => DeclaredInt) |
+        DetermineExpType (EDC3 (x)) = (fn (y:AbsTypingTable) => DeclaredBool) |
+        DetermineExpType (EDC4 (x1, x2, ODC1(AOp))) =
+                                  (fn (y:AbsTypingTable) => DeclaredInt) |
+        DetermineExpType (EDC5 (x1, x2, ODC2(ROp))) =
+                                  (fn (y:AbsTypingTable) => DeclaredBool) |
+        DetermineExpType (EDC6 (x1, x2, ODC3(BOp))) =
+                                  (fn (y:AbsTypingTable) => DeclaredBool) 
+                                  
+(* 9 *)
+fun ExpressionVCheck (EDC1 a) = (fn (b:AbsTypingTable) => b(a) <> NoDeclaration) |
+    ExpressionVCheck (EDC2 a) = (fn (b:AbsTypingTable) => true) |
+    ExpressionVCheck (EDC3 a) = (fn (b:AbsTypingTable) => true) |
+
 
 (*------------End step2 static sementics---------------*)
