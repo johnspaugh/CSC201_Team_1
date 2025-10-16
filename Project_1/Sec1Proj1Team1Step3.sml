@@ -346,8 +346,8 @@ val test11_bad1 = ProgramVCheck(bad_program);
 (*------------End step2 static sementics---------------*)
 
 
-(*------------step2 dynamic semantics---------------*)
+(*------------step3 dynamic semantics---------------*)
 (* sml<Sec1Proj1Team1Step3.sml>Sec1Proj1Team1Step3Result.txt   *)
 
 
-(*------------------------------------------------------------*)
+(*------------End step3 dynamic semantics----------------------*)
