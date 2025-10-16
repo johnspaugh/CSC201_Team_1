@@ -211,17 +211,15 @@ val rec DecListVCheck =
      ) ;
 
 (*Good testing step 2, input allDeclarations list with int into DecListVCheck
-val test1 = NoDuplicate(allDeclarations )(var_answer); *)
+test1 expected false, Gtest1 expected true*)
+
+val test1 = NoDuplicate(allDeclarations )(var_answer); 
 val Gtest1 = DecListVCheck(allDeclarations);
 
-(* Bad testing step 2, input a duplicate bool declaration list that is not a declarationlist into DecListVCheck 
-*)
-val var_bb  = S "bb";
-val declaration_bb      = (var_n, TypeBool);
-val declarationslist_bb = [
-    declaration_bb, 
-    declaration_bb ];
-val Btest1 = DecListVCheck(declarationslist_bb);
+(* Bad testing step 2, New List using allDeclarations adding on a duplicate n to the head
+Btest1 expected false*)
+val declarationslist_bad = declaration_n :: allDeclarations;
+val Btest1 = DecListVCheck(declarationslist_bad);
 
 
 (* 3-7 : DeclarationList -> AbsTypingTable *)
@@ -267,22 +265,19 @@ fun NewAbsTypingTable(oldatt: AbsTypingTable)(a:Variable, TypeBool)
                                    else oldatt(b))
 ;
 
-(* ****Testing part 6  
-val myAbsTypingTable1 = NewAbsTypeTable(AbsTypingTableNoDeclaration)
-     myAbsTypingTable1(var in 1st dec)
-     myAbsTypingTable1(other rows)
-val myAbsTypingTable2 = NewAbsTypingTable(myAbsTypingTable1)
-                                        (myAbsTypingTable2)
-     myAbsTypingTable2(var in 1st dec )
-     myAbsTypingTable2(var in 2nd dec )
-     myAbsTypingTable2(other rows)
-*)
-(*
-val myAbsTypingTable1 = NewAbsTypeTable(AbsTypingTableNoDeclaration)
+(* ****Testing part 6 ---- Step 6 Testing 
+Had to add var bb to test for boolean since allDeclarations has none*)
+val myAbsTypingTable1 = NewAbsTypingTable(AbsTypingTableNoDeclaration)(declaration_n);
+myAbsTypingTable1 var_n;
+myAbsTypingTable1 var_answer;
 
-myAbsTypingTable1(var_answer)
-myAbsTypingTable1([])
-*)
+val var_bb  = S "bb";
+val declaration_bb      = (var_bb, TypeBool);
+
+val myAbsTypingTable2 = NewAbsTypingTable(myAbsTypingTable1)(declaration_bb);
+myAbsTypingTable2 var_n;
+myAbsTypingTable2 var_bb;
+myAbsTypingTable2 var_answer;
 
 (* 7 wholeAbsTypingTable: DeclarationList -> AbsTypingTable
 val rec wholeAbsTypingTable =
@@ -297,11 +292,16 @@ val rec wholeAbsTypingTable =
           ([]) => AbsTypingTableNoDeclaration
      );
 
-(* ***Testing part 7
-val myAbsTypingTable = wholeAbsTypingTable(mydecList)
-     myAbsTypingTable(each var in my declist)
-     myAbsTypingTable(one var not in my declist)
-*)
+(* ***Testing part 7 ----Step 7 Testing 
+Every var in allDecs should output its' type, any var not in allDecs should be no dec*)
+val myAbsTypingTable = wholeAbsTypingTable(allDeclarations);
+myAbsTypingTable(var_n);
+myAbsTypingTable(var_cur);
+myAbsTypingTable(var_prev1);
+myAbsTypingTable(var_prev2);
+myAbsTypingTable(var_i);
+myAbsTypingTable(var_answer);
+myAbsTypingTable(var_temp);
 
 
 (* 8 DetermineExpType: Expression -> AbsTypingTable -> TypeValue
@@ -360,23 +360,20 @@ fun ExpressionVCheck(Var(a)) = (fn(b:AbsTypingTable) => b(a) <> NoDeclaration) |
      ExpressionVCheck(IC(a)) = (fn(b:AbsTypingTable) => true) |
      ExpressionVCheck(BC(a)) = (fn(b:AbsTypingTable) => true) |
      ExpressionVCheck(EEO(a1, a2, AOp(opa))) =
-          (fn(b:AbsTypingTable) => Expression(a1)(b) ) andalso
+          (fn(b:AbsTypingTable) => ExpressionVCheck(a1)(b)  andalso
           (DetermineExpType(a1)(b) = DeclaredInt ) andalso
-          Expression(a2)(b) andalso  
-          (DetermineExpType(a2)(b) = DeclaredInt)  | 
+          ExpressionVCheck(a2)(b) andalso  
+          (DetermineExpType(a2)(b) = DeclaredInt))  | 
      ExpressionVCheck(EEO(a1, a2, ROp(opa))) =
-          (fn(b:AbsTypingTable) => 
-               Expression(a1)(b) ) andalso
-         (DetermineExpType(a1)(b) = DeclaredInt ) andalso
-          Expression(a2)(b) andalso  
-          (DetermineExpType(a2)(b) = DeclaredInt)  | 
+          (fn(b:AbsTypingTable) => ExpressionVCheck(a1)(b) andalso
+          (DetermineExpType(a1)(b) = DeclaredInt ) andalso
+          ExpressionVCheck(a2)(b) andalso  
+          (DetermineExpType(a2)(b) = DeclaredInt))  | 
      ExpressionVCheck(EEO(a1, a2, BOp(opa))) =
-          (fn(b:AbsTypingTable) => 
-               Expression(a1)(b) ) andalso
+          (fn(b:AbsTypingTable) => ExpressionVCheck(a1)(b) andalso
           (DetermineExpType(a1)(b) = DeclaredBool ) andalso
-          Expression(a2)(b) andalso  
-          (DetermineExpType(a2)(b) = DeclaredBool)  
-;
+          ExpressionVCheck(a2)(b) andalso  
+          (DetermineExpType(a2)(b) = DeclaredBool));
 
 (* ****testing part 9, 6-good cases
 EDC4(a1,a2, ODC1(opa))
@@ -419,25 +416,25 @@ val rec InstructionVCheck =
 
 val rec InstructionVCheck =
      (fn (a:AbsTypingTable) =>
-          ( (Skip) => true ) |
-          ( VE(x, y) => 
+          (fn (Skip) => true  |
+          ( VE(x, y)) => 
                (a(x) = DetermineExpType(y)(a) ) andalso
                (a(x) <> NoDeclaration) andalso
-               ExpressionVCheck(y)(a) )  | 
-          ( IfThenElse(x,y,z) =>
+               ExpressionVCheck(y)(a)   | 
+          ( IfThenElse(x,y,z)) =>
                (DetermineExpType(x)(a) = DeclaredBool) andalso
                ExpressionVCheck(x)(a) andalso
-               InstructionVCheck(a)(y) andalso InstructionVCheck(a)(z) ) |
-          ( WhileLoop(x,y) => 
+               InstructionVCheck(a)(y) andalso InstructionVCheck(a)(z) |
+          ( WhileLoop(x,y)) => 
                (DetermineExpType(x)(a) = DeclaredBool) andalso
                ExpressionVCheck(x)(a) andalso
-               InstructionVCheck(a)(y) ) |
-          ( Seq([]) => true ) |
-          ( Seq(InstListHead :: InstListTail)  =>
+               InstructionVCheck(a)(y)  |
+          ( Seq([])) => true  |
+          ( Seq(InstListHead :: InstListTail))  =>
                InstructionVCheck(a)(InstListHead) andalso
-               InstructionVCheck(a)(Seq(InstListTail)) )   
+               InstructionVCheck(a)(Seq(InstListTail))    
      )
-;
+);
 
 (*  ****testing part 10, 4-good cases 
           (no skp, no []) 

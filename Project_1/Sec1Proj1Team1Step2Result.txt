@@ -126,56 +126,41 @@ val lucas =
 stdIn:180.9-180.11 Warning: calling polyEqual
 val NoDuplicate = fn : (Variable * Type) list -> Variable -> bool
 val DecListVCheck = fn : DeclarationList -> bool
+val test1 = false : bool
 val Gtest1 = true : bool
-val var_bb = S "bb" : Variable
-val declaration_bb = (S "n",TypeBool) : Variable * Type
-val declarationslist_bb = [(S "n",TypeBool),(S "n",TypeBool)]
+val declarationslist_bad =
+  [(S "n",TypeInt),(S "n",TypeInt),(S "cur",TypeInt),(S "prev1",TypeInt),
+   (S "prev2",TypeInt),(S "i",TypeInt),(S "answer",TypeInt)]
   : (Variable * Type) list
 val Btest1 = false : bool
 datatype TypeValue = DeclaredBool | DeclaredInt | NoDeclaration
 type AbsTypingTable = Variable -> TypeValue
 val AbsTypingTableNoDeclaration = fn : Variable -> TypeValue
 val Gtest5_1 = NoDeclaration : TypeValue
-stdIn:263.31 Warning: calling polyEqual
-stdIn:266.30 Warning: calling polyEqual
+stdIn:261.31 Warning: calling polyEqual
+stdIn:264.30 Warning: calling polyEqual
 val NewAbsTypingTable = fn
   : AbsTypingTable -> Variable * Type -> Variable -> TypeValue
+val myAbsTypingTable1 = fn : Variable -> TypeValue
+val it = DeclaredInt : TypeValue
+val it = NoDeclaration : TypeValue
+val var_bb = S "bb" : Variable
+val declaration_bb = (S "bb",TypeBool) : Variable * Type
+val myAbsTypingTable2 = fn : Variable -> TypeValue
+val it = DeclaredInt : TypeValue
+val it = DeclaredBool : TypeValue
+val it = NoDeclaration : TypeValue
 val wholeAbsTypingTable = fn : DeclarationList -> AbsTypingTable
+val myAbsTypingTable = fn : AbsTypingTable
+val it = DeclaredInt : TypeValue
+val it = DeclaredInt : TypeValue
+val it = DeclaredInt : TypeValue
+val it = DeclaredInt : TypeValue
+val it = DeclaredInt : TypeValue
+val it = DeclaredInt : TypeValue
+val it = NoDeclaration : TypeValue
 val DetermineExpType = fn : Expression -> AbsTypingTable -> TypeValue
-stdIn:363.36-363.46 Error: unbound variable or constructor: Expression
-stdIn:364.33 Error: unbound variable or constructor: b
-stdIn:365.11-365.21 Error: unbound variable or constructor: Expression
-stdIn:365.26 Error: unbound variable or constructor: b
-stdIn:366.33 Error: unbound variable or constructor: b
-stdIn:369.16-369.26 Error: unbound variable or constructor: Expression
-stdIn:370.32 Error: unbound variable or constructor: b
-stdIn:371.11-371.21 Error: unbound variable or constructor: Expression
-stdIn:371.26 Error: unbound variable or constructor: b
-stdIn:372.33 Error: unbound variable or constructor: b
-stdIn:375.16-375.26 Error: unbound variable or constructor: Expression
-stdIn:376.33 Error: unbound variable or constructor: b
-stdIn:377.11-377.21 Error: unbound variable or constructor: Expression
-stdIn:377.26 Error: unbound variable or constructor: b
-stdIn:378.33 Error: unbound variable or constructor: b
-stdIn:363.11-366.50 Error: operand of andalso is not of type bool [tycon mismatch]
-  operand: AbsTypingTable -> _
-  in expression:
-    (fn b : AbsTypingTable => (<errorvar> a1) b)
-  andalso (((DetermineExpType a1) <errorvar> = DeclaredInt)
-  andalso (((<errorvar> a2) <errorvar>)
-  andalso ((DetermineExpType a2) <errorvar> = DeclaredInt)))
-stdIn:368.11-372.50 Error: operand of andalso is not of type bool [tycon mismatch]
-  operand: AbsTypingTable -> _
-  in expression:
-    (fn b : AbsTypingTable => (<errorvar> a1) b)
-  andalso (((DetermineExpType a1) <errorvar> = DeclaredInt)
-  andalso (((<errorvar> a2) <errorvar>)
-  andalso ((DetermineExpType a2) <errorvar> = DeclaredInt)))
-stdIn:374.11-378.51 Error: operand of andalso is not of type bool [tycon mismatch]
-  operand: AbsTypingTable -> _
-  in expression:
-    (fn b : AbsTypingTable => (<errorvar> a1) b)
-  andalso (((DetermineExpType a1) <errorvar> = DeclaredBool)
-  andalso (((<errorvar> a2) <errorvar>)
-  andalso ((DetermineExpType a2) <errorvar> = DeclaredBool)))
-- - 
+val ExpressionVCheck = fn : Expression -> AbsTypingTable -> bool
+val InstructionVCheck = fn : AbsTypingTable -> Instruction -> bool
+val ProgramVCheck = fn : DeclarationList * Instruction -> bool
+- 
