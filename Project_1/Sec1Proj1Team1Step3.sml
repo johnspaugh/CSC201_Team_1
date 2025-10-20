@@ -346,8 +346,44 @@ val test11_bad1 = ProgramVCheck(bad_program);
 (*------------End step2 static sementics---------------*)
 
 
-(*------------step2 dynamic semantics---------------*)
+(*------------step3 dynamic semantics---------------*)
 (* sml<Sec1Proj1Team1Step3.sml>Sec1Proj1Team1Step3Result.txt   *)
 
+(* 1-4 Abstraction of memory*)
+(* 1 
+datatype ValueInAbsProgState = ValueUnknown | ValueInt of int | ValueBool of bool;
+*)
 
-(*------------------------------------------------------------*)
+(* 2
+type AbsProgState: Variable -> ValueInAbsProgState 
+a function type 
+x: AbsProgState
+y: Variable
+y(x) = {ValueUnknown, ValueInt(i), valueBool(b) }
+*)
+
+(* 3 AbsProgStateUnknown: AbsProgState 
+val AbsProgStateUnknown =
+          (fn (x: Variable) => ValueUnknown)
+*)
+
+(* 4 NewAbsProgState: Variable x ValueInAbsProgState ->
+                         AbsProgState -> Variable -> ValueInAbsProgState 
+                           (old)           ---------(new)----------
+
+fun NewAbsProgState
+     (a:Variable, b:ValueInAbsProgState)(oldaps:AbsProgState)(Variable) = 
+          if c = a then b else oldaps(c)
+*)
+
+(* ****testing 2 steps to complete
+val myAbsProgState1 = NewAbsProgState(var1, value)(AbsProgStateUnknown)
+myAbsProgState1(var1)
+myAbsProgState2(each other vars)    ----- value = unknown 
+val myAbsProgState2 = NewAbsProgState(var2, value2)(myAbsProgState1)
+myAbsProgState2(var1)
+myAbsProgState2(var2)
+myAbsProgState2(each other vars)
+  *)
+
+(*------------End step3 dynamic semantics----------------------*)
