@@ -169,9 +169,11 @@ int main(){ //int argc, char *argv[]){
 (*------------step2 static semantics---------------*)
 (* sml<Sec1Proj1Team1Step2.ml>Sec1Proj1Team1Step2Result.txt   *)
 
+(* 1 NoDuplicate: DeclarationList -> Variable -> Bool *)
 fun NoDuplicate((a: Variable, b: Type):: decListTail)(c: Variable) = (a <> c) andalso NoDuplicate decListTail c
   | NoDuplicate [] c = true;
 
+(* 2 DecListVCheck: DeclarationList -> Bool *)
 val rec DecListVCheck =
      (fn ( ((a: Variable, b: Type):: decListTail):DeclarationList) =>
           DecListVCheck(decListTail) andalso
@@ -181,7 +183,6 @@ val rec DecListVCheck =
 
 (*Good testing step 2, input allDeclarations list with int into DecListVCheck
 Gtest1 expected true*)
-
 val Gtest1 = DecListVCheck(allDeclarations);
 
 (* Bad testing step 2, New List using allDeclarations adding on a duplicate n to the head
@@ -191,16 +192,16 @@ val Btest1 = DecListVCheck(declarationslist_bad);
 
 (* 3-7 : DeclarationList -> AbsTypingTable *)
 
-(* 3 *)
+(* 3 DeclarationList:  NoDeclaration | DeclaredInt | DeclaredBool  *)
 datatype TypeValue = NoDeclaration | DeclaredInt | DeclaredBool ;
 
-(* 4 *)
+(* 4 AbsTypingTable: Variable -> TypeValue *)
 type AbsTypingTable = Variable -> TypeValue 
 
-(* 5 *)
+(* 5 AbsTypingTableNoDeclaration: AbsTypingTable *)
 val AbsTypingTableNoDeclaration = (fn (x:Variable) => NoDeclaration)    
 
-(* 6 *)             
+(* 6 NewAbsTypingTable: AbsTypingTable->Declaration->AbsTypingTable *)             
 fun NewAbsTypingTable(oldatt: AbsTypingTable)(a:Variable, TypeBool)
      =(fn (b:Variable)=> if b = a then DeclaredBool
                                    else oldatt(b)) |
@@ -222,7 +223,7 @@ myAbsTypingTable2 var_n;
 myAbsTypingTable2 var_bb;
 myAbsTypingTable2 var_answer;
 
-(* 7 *)
+(* 7 wholeAbsTypingTable: DeclarationList->AbsTypingTable *)
 val rec wholeAbsTypingTable =
      (fn ((decListhead:: decListTail):DeclarationList)=>
           NewAbsTypingTable(wholeAbsTypingTable(decListTail) )(decListhead) |
@@ -350,22 +351,20 @@ val test11_bad1 = ProgramVCheck(bad_program);
 (* sml<Sec1Proj1Team1Step3.sml>Sec1Proj1Team1Step3Result.txt   *)
 
 (* 1-4 Abstraction of memory*)
-(* 1 
-datatype ValueInAbsProgState = ValueUnknown | ValueInt of int | ValueBool of bool;
-*)
+(* 1 datatype ValueInAbsProgState = ValueUnknown | ValueInt of int | ValueBool of bool; *)
 datatype ValueInAbsProgState = ValueUnknown | ValueInt of int | ValueBool of bool;
 
 
-(* 2
-type AbsProgState: Variable -> ValueInAbsProgState 
-a function type 
+(* 2 type AbsProgState: Variable -> ValueInAbsProgState *)
+(* a function type 
 x: AbsProgState
 y: Variable
 y(x) = {ValueUnknown, ValueInt(i), valueBool(b) }
 *)
 type AbsProgState = Variable -> ValueInAbsProgState;
 
-(* 3 AbsProgStateUnknown: AbsProgState 
+(* 3 AbsProgStateUnknown: AbsProgState *)
+(*
 val AbsProgStateUnknown =
           (fn (x: Variable) => ValueUnknown)
 *)
@@ -374,7 +373,8 @@ val AbsProgStateUnknown =
 
 (* 4 NewAbsProgState: Variable x ValueInAbsProgState ->
                          AbsProgState -> Variable -> ValueInAbsProgState 
-                           (old)           ---------(new)----------
+                           (old)           ---------(new)---------- *)
+(*
 fun NewAbsProgState
      (a:Variable, b:ValueInAbsProgState)(oldaps:AbsProgState)(Variable) = 
           if c = a then b else oldaps(c)
@@ -382,7 +382,7 @@ fun NewAbsProgState
 fun NewAbsProgState(a:Variable, b:ValueInAbsProgState)(oldaps:AbsProgState)(c:Variable) = 
           if c = a then b else oldaps(c);
 
-(* ****testing 2 steps to complete
+(* ****testing 4, 2 step to complete
 val myAbsProgState1 = NewAbsProgState(var1, value)(AbsProgStateUnknown)
 myAbsProgState1(var1)
 myAbsProgState2(each other vars)    ----- value = unknown 
@@ -394,27 +394,20 @@ myAbsProgState2(each other vars)
 
 (* 5-10  value/meaning of Expression *)
 
-(* 5 
-Exception WrongDivision
-*)
+(* 5 Exception WrongDivision *)
 exception WrongDivision;
 
-(* 6
-Exception WrongOpForValueInt
-*)
+(* 6 Exception WrongOpForValueInt *)
 exception WrongOpForValueInt;
 
-(* 7 
-Exception WrongOpForValueBool
-*)
+(* 7 Exception WrongOpForValueBool *)
 exception WrongOpForValueBool;
 
-(* 8
-Exception WrongExpression
-*)
+(* 8 Exception WrongExpression *)
 exception WrongExpression;
 
-(* 9 ExpCalculation: ValueInAbsProgState x ValueInAbsProgState -> Operator -> ValueInAbsProgState
+(* 9 ExpCalculation: ValueInAbsProgState x ValueInAbsProgState -> Operator -> ValueInAbsProgState *)
+(*
 val ExpCalculation =
      (fn (ValueInt(v1), ValueInt(v2)) =>
           (fn(ODC1(PLUS)) =>ValueInt(v1+v2) | 
@@ -466,7 +459,8 @@ val ExpCalculation =
      
 ;
 
-(* 10. ExpressionValue: Expression -> AbsProgState -> ValueInAbsProgState
+(* 10. ExpressionValue: Expression -> AbsProgState -> ValueInAbsProgState *)
+(*
 fun ExpressionValue(EDC1(x))(aps:AbsProgState)=aps(x) |
      ExpressionValue(EDC2(x))(aps:AbsProgState)=ValueInt(x) |
      ExpressionValue(EDC3(x))(aps:AbsProgState)=ValueBool(x) |
@@ -480,7 +474,7 @@ fun ExpressionValue(EDC1(x))(aps:AbsProgState)=aps(x) |
           ExpCalculation(ExpressionValue(a)(aps),ExpressionValue(b)(aps))(c)
 
 
- (* **** Testingmus use a good AbsProgState
+ (* **** Testing 10, use a good AbsProgState
  6 good cases --3 base cases, 3 binary of 3 types of operators
  don't use word op - already is a keyword
  Arithmetic_op -- realistic
@@ -494,7 +488,8 @@ fun ExpressionValue(EDC1(x))(aps:AbsProgState)=aps(x) |
  *)
 
 (* 11 MeaningInstruction: Instruction -> AbsProgState -> AbsProgState
-                                           (old)          (new)
+                                           (old) ------------  (new) *)
+(*
 val rec MeaningInstruction =
      (fn(Skip) => (fn (aps:AbsProgState) => aps) |
           (IDC2(a,b)) => (fn(aps:AbsProgState) =>
@@ -516,16 +511,16 @@ val rec MeaningInstruction =
      )
 *) 
 
-(* ****Testing
+(* ****Testing 11
 must use a good AbsProgState
 4 good cases
 Check resulting AbsProgState
 *)
 
-(* 12 Exception: InVaildProgram
-*)
+(* 12 Exception: InVaildProgram *)
 
-(* 13 MeaningProgram: Program -> AbsProgState
+(* 13 MeaningProgram: Program -> AbsProgState *)
+(*
 val MeaningProgram =
      (fn((a,b):Program) => 
           if ProgramVCheck(a,b)
@@ -539,7 +534,6 @@ one good case. all sample program ---
 --generate fun, apply to Program every 
 variable in Program get to AbsProgState
 no bad case, (not necessary )
-
 *)
 
 

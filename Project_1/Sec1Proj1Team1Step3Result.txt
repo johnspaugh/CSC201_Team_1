@@ -24,7 +24,7 @@ datatype Type = TypeBool | TypeInt
 type Declaration = Variable * Type
 type DeclarationList = Declaration list
 type Program = DeclarationList * Instruction
-stdIn:172.73-172.75 Warning: calling polyEqual
+stdIn:173.73-173.75 Warning: calling polyEqual
 val var_n = S "n" : Variable
 val var_cur = S "cur" : Variable
 val var_prev1 = S "prev1" : Variable
@@ -133,8 +133,8 @@ val declarationslist_bad =
   : (Variable * Type) list
 val Btest1 = false : bool
 datatype TypeValue = DeclaredBool | DeclaredInt | NoDeclaration
-stdIn:205.31 Warning: calling polyEqual
-stdIn:208.30 Warning: calling polyEqual
+stdIn:206.31 Warning: calling polyEqual
+stdIn:209.30 Warning: calling polyEqual
 type AbsTypingTable = Variable -> TypeValue
 val AbsTypingTableNoDeclaration = fn : Variable -> TypeValue
 val NewAbsTypingTable = fn
