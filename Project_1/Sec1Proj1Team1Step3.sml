@@ -386,4 +386,73 @@ myAbsProgState2(var2)
 myAbsProgState2(each other vars)
   *)
 
+(* 5-10  value/meaning of Expression *)
+
+(* 5 
+Exception WrongDivision
+*)
+
+(* 6
+Exception WrongOpForValueInt
+*)
+
+(* 7 
+Exception WrongOpForValueBool
+*)
+
+(* 8
+Exception WrongExpression
+*)
+
+(* 9 ExpCalculation: ValueInAbsProgState x ValueInAbsProgState -> Operator -> ValueInAbsProgState
+val ExpCalculation =
+     (fn (ValueInt(v1), Value(v2)) =>
+          (fn(ODC1(PLUS)) =>ValueInt(v1+v2) | 
+               (ODC1(MINUS)) =>ValueInt(v1-v2) | 
+               (ODC1(TIMES)) =>ValueInt(v1*v2) | 
+               (ODC1(DIV)) => if v2 =0 
+                              then raise WrongDivision
+                              else ValueInt(v1 div v2 ) | 
+               (ODC2(LT)) =>  ---- |
+                 .
+                 .
+                 .
+               (ODC2(GT)) =>  ---- | 
+               ( _ ) => raise WrongOpForValueInt  
+          ) |
+          (ValueBool(v1), ValueBool(v2) =>
+          (fn(ODC3(AND)) => ------ |
+               (ODC3(OR)) => ----- | 
+               (_) => raise WrongOpForValueBool 
+               ) | 
+               (_,_) => (fn(_) => raise WrongExpression)
+               )
+     )
+
+*)
+
+(* 10. ExpressionValue: Expression -> AbsProgState -> ValueInAbsProgState
+fun ExpressionValue(EDC1(x))(aps:AbsProgState)=aps(x) |
+     ExpressionValue(EDC2(x))(aps:AbsProgState)=ValueInt(x) |
+     ExpressionValue(EDC3(x))(aps:AbsProgState)=ValueBool(x) |
+     ExpressionValue(EDC4(a,b,c))(aps:AbsProgState) =
+          ExpCalculation(ExpressionValue(a)(aps),ExpressionValue(b)(aps))(c)
+
+ *)
+
+ (* **** Testingmus use a good AbsProgState
+ 6 good cases --3 base cases, 3 binary of 3 types of operators
+ don't use word op - already is a keyword
+ Arithmetic_op -- realistic
+ more than a+b
+ 1 bad case
+     raise WrongExpression  -- try to get either of them
+     Not comment out bad cases with notes for the Professor,
+     and then continue on with the rest of the work in sml,
+     otherwise will crash if not commented out, so don't 
+     forget to comment out.
+ *)
+
+ 
+
 (*------------End step3 dynamic semantics----------------------*)
