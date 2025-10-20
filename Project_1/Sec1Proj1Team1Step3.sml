@@ -453,6 +453,54 @@ fun ExpressionValue(EDC1(x))(aps:AbsProgState)=aps(x) |
      forget to comment out.
  *)
 
- 
+(* 11 MeaningInstruction: Instruction -> AbsProgState -> AbsProgState
+                                           (old)          (new)
+val rec MeaningInstruction =
+     (fn(Skip) => (fn (aps:AbsProgState) => aps) |
+          (IDC2(a,b)) => (fn(aps:AbsProgState) =>
+               NewAbsProgState(a)
+                    (ExpressionValue(b)(aps))(aps)) |
+          (IDC3(a,b,c)) => (fn(aps:AbsProgState) =>
+               if ExpressionValue(a)(aps) = ValueBool(true)
+               then MeaningInstruction(b)(aps)
+               else MeaningInstruction(c)(aps) ) | 
+          (IDC4(a,b)) => (fn(aps:AbsProgState) =>
+               if ExpressionValue(a)(aps) <> ValueBool(true)
+               then aps
+               else MeaningInstruction(IDC4(a,b))(MeaningInstruction(b)(aps)) ) | 
+                                                            aps'
+          (IDC5([])) => (fn(aps:AbsProgState) => aps) |
+          (IDC5(InstListHead::InstListTail) => (fn(aps:AbsProgState) => 
+               MeaningInstruction(IDC5(InstListTail))(MeaningInstruction(InstListHead)(aps)) )
+                                                            aps'
+     )
+*) 
+
+(* ****Testing
+must use a good AbsProgState
+4 good cases
+Check resulting AbsProgState
+*)
+
+(* 12 Exception: InVaildProgram
+*)
+
+(* 13 MeaningProgram: Program -> AbsProgState
+val MeaningProgram =
+     (fn((a,b):Program) => 
+          if ProgramVCheck(a,b)
+          then MeaningInstruction(b)(AbsProgStateUnknown)
+          else raise InVaildProgram
+     )
+*)
+
+(* ***Testing 13
+one good case. all sample program ---
+--generate fun, apply to Program every 
+variable in Program get to AbsProgState
+no bad case, (not necessary )
+
+*)
+
 
 (*------------End step3 dynamic semantics----------------------*)
