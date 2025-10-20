@@ -189,4 +189,22 @@ val bad_program =
     (S "i",TypeInt),(S "answer",TypeInt)],VE (S "n",BC true))
   : (Variable * Type) list * Instruction
 val test11_bad1 = false : bool
+datatype ValueInAbsProgState
+  = ValueBool of bool
+  | ValueInt of int
+  | ValueUnknown
+type AbsProgState = Variable -> ValueInAbsProgState
+val AbsProgStateUnknown = fn : Variable -> ValueInAbsProgState
+stdIn:383.16 Warning: calling polyEqual
+val NewAbsProgState = fn
+  : Variable * ValueInAbsProgState
+     -> AbsProgState -> Variable -> ValueInAbsProgState
+exception WrongDivision
+exception WrongOpForValueInt
+exception WrongOpForValueBool
+exception WrongExpression
+val ExpCalculation = fn
+  : ValueInAbsProgState * ValueInAbsProgState
+     -> Operator -> ValueInAbsProgState
+val ExpressionValue = fn : Expression -> AbsProgState -> ValueInAbsProgState
 

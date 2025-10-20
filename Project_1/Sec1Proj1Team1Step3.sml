@@ -353,6 +353,8 @@ val test11_bad1 = ProgramVCheck(bad_program);
 (* 1 
 datatype ValueInAbsProgState = ValueUnknown | ValueInt of int | ValueBool of bool;
 *)
+datatype ValueInAbsProgState = ValueUnknown | ValueInt of int | ValueBool of bool;
+
 
 (* 2
 type AbsProgState: Variable -> ValueInAbsProgState 
@@ -361,20 +363,24 @@ x: AbsProgState
 y: Variable
 y(x) = {ValueUnknown, ValueInt(i), valueBool(b) }
 *)
+type AbsProgState = Variable -> ValueInAbsProgState;
 
 (* 3 AbsProgStateUnknown: AbsProgState 
 val AbsProgStateUnknown =
           (fn (x: Variable) => ValueUnknown)
 *)
+val AbsProgStateUnknown =
+          (fn (x: Variable) => ValueUnknown);
 
 (* 4 NewAbsProgState: Variable x ValueInAbsProgState ->
                          AbsProgState -> Variable -> ValueInAbsProgState 
                            (old)           ---------(new)----------
-
 fun NewAbsProgState
      (a:Variable, b:ValueInAbsProgState)(oldaps:AbsProgState)(Variable) = 
           if c = a then b else oldaps(c)
 *)
+fun NewAbsProgState(a:Variable, b:ValueInAbsProgState)(oldaps:AbsProgState)(c:Variable) = 
+          if c = a then b else oldaps(c);
 
 (* ****testing 2 steps to complete
 val myAbsProgState1 = NewAbsProgState(var1, value)(AbsProgStateUnknown)
@@ -391,22 +397,26 @@ myAbsProgState2(each other vars)
 (* 5 
 Exception WrongDivision
 *)
+exception WrongDivision;
 
 (* 6
 Exception WrongOpForValueInt
 *)
+exception WrongOpForValueInt;
 
 (* 7 
 Exception WrongOpForValueBool
 *)
+exception WrongOpForValueBool;
 
 (* 8
 Exception WrongExpression
 *)
+exception WrongExpression;
 
 (* 9 ExpCalculation: ValueInAbsProgState x ValueInAbsProgState -> Operator -> ValueInAbsProgState
 val ExpCalculation =
-     (fn (ValueInt(v1), Value(v2)) =>
+     (fn (ValueInt(v1), ValueInt(v2)) =>
           (fn(ODC1(PLUS)) =>ValueInt(v1+v2) | 
                (ODC1(MINUS)) =>ValueInt(v1-v2) | 
                (ODC1(TIMES)) =>ValueInt(v1*v2) | 
@@ -424,12 +434,37 @@ val ExpCalculation =
           (fn(ODC3(AND)) => ------ |
                (ODC3(OR)) => ----- | 
                (_) => raise WrongOpForValueBool 
-               ) | 
-               (_,_) => (fn(_) => raise WrongExpression)
+          ) | 
+          (_,_) => (fn(_) => raise WrongExpression)
                )
      )
 
 *)
+val ExpCalculation =
+     (fn (ValueInt(v1), ValueInt(v2)) =>
+          (fn(AOp(Plus)) =>ValueInt(v1+v2) | 
+               (AOp(Minus)) =>ValueInt(v1-v2) | 
+               (AOp(Times)) =>ValueInt(v1*v2) | 
+               (AOp(Div)) => if v2 =0 
+                              then raise WrongDivision
+                              else ValueInt(v1 div v2 ) | 
+               (ROp(Lt)) =>  ValueBool(v1<v2) |
+               (ROp(Le)) =>  ValueBool(v1<=v2) |
+               (ROp(Eq)) =>  ValueBool(v1=v2) |
+               (ROp(Ne)) =>  ValueBool(v1<>v2) |
+               (ROp(Ge)) =>  ValueBool(v1>=v2) |
+               (ROp(Gt)) =>  ValueBool(v1>v2) | 
+               ( _ ) => raise WrongOpForValueInt  
+          ) |
+         ( ValueBool(v1), ValueBool(v2)) =>
+          (fn(BOp(And)) => ValueBool(v1 andalso v2) |
+               (BOp(Or)) => ValueBool(v1 orelse v2) | 
+               (_) => raise WrongOpForValueBool 
+          ) | 
+          (_,_) => (fn(_) => raise WrongExpression)
+     )    
+     
+;
 
 (* 10. ExpressionValue: Expression -> AbsProgState -> ValueInAbsProgState
 fun ExpressionValue(EDC1(x))(aps:AbsProgState)=aps(x) |
@@ -437,8 +472,13 @@ fun ExpressionValue(EDC1(x))(aps:AbsProgState)=aps(x) |
      ExpressionValue(EDC3(x))(aps:AbsProgState)=ValueBool(x) |
      ExpressionValue(EDC4(a,b,c))(aps:AbsProgState) =
           ExpCalculation(ExpressionValue(a)(aps),ExpressionValue(b)(aps))(c)
-
  *)
+ fun ExpressionValue(Var(x))(aps:AbsProgState)=aps(x) |
+     ExpressionValue(IC(x))(aps:AbsProgState)=ValueInt(x) |
+     ExpressionValue(BC(x))(aps:AbsProgState)=ValueBool(x) |
+     ExpressionValue(EEO(a,b,c))(aps:AbsProgState) =
+          ExpCalculation(ExpressionValue(a)(aps),ExpressionValue(b)(aps))(c)
+
 
  (* **** Testingmus use a good AbsProgState
  6 good cases --3 base cases, 3 binary of 3 types of operators
