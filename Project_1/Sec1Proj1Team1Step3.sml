@@ -212,16 +212,26 @@ fun NewAbsTypingTable(oldatt: AbsTypingTable)(a:Variable, TypeBool)
 (* Step 6 Testing 
 Had to add var bb to test for boolean since allDeclarations has none*)
 val myAbsTypingTable1 = NewAbsTypingTable(AbsTypingTableNoDeclaration)(declaration_n);
+val myAbsTypingTable1 = NewAbsTypingTable(AbsTypingTableNoDeclaration)(declaration_cur);
+val myAbsTypingTable1 = NewAbsTypingTable(AbsTypingTableNoDeclaration)(declaration_prev1);
+val myAbsTypingTable1 = NewAbsTypingTable(AbsTypingTableNoDeclaration)(declaration_prev2);
+val myAbsTypingTable1 = NewAbsTypingTable(AbsTypingTableNoDeclaration)(declaration_i);
+val myAbsTypingTable1 = NewAbsTypingTable(AbsTypingTableNoDeclaration)(declaration_answer);
 myAbsTypingTable1 var_n;
 myAbsTypingTable1 var_answer;
 
 val var_bb  = S "bb";
 val declaration_bb      = (var_bb, TypeBool);
 
-val myAbsTypingTable2 = NewAbsTypingTable(myAbsTypingTable1)(declaration_bb);
+val myAbsTypingTable2 = NewAbsTypingTable(myAbsTypingTable1)(declaration_n);
+val myAbsTypingTable2 = NewAbsTypingTable(myAbsTypingTable1)(declaration_cur);
+val myAbsTypingTable2 = NewAbsTypingTable(myAbsTypingTable1)(declaration_prev1);
+val myAbsTypingTable2 = NewAbsTypingTable(myAbsTypingTable1)(declaration_prev2);
+val myAbsTypingTable2 = NewAbsTypingTable(myAbsTypingTable1)(declaration_i);
+val myAbsTypingTable2 = NewAbsTypingTable(myAbsTypingTable1)(declaration_answer);
 myAbsTypingTable2 var_n;
-myAbsTypingTable2 var_bb;
 myAbsTypingTable2 var_answer;
+myAbsTypingTable2 var_bb;
 
 (* 7 wholeAbsTypingTable: DeclarationList->AbsTypingTable *)
 val rec wholeAbsTypingTable =

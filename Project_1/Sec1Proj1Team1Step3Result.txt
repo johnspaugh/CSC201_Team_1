@@ -140,13 +140,23 @@ val AbsTypingTableNoDeclaration = fn : Variable -> TypeValue
 val NewAbsTypingTable = fn
   : AbsTypingTable -> Variable * Type -> Variable -> TypeValue
 val myAbsTypingTable1 = fn : Variable -> TypeValue
-val it = DeclaredInt : TypeValue
+val myAbsTypingTable1 = fn : Variable -> TypeValue
+val myAbsTypingTable1 = fn : Variable -> TypeValue
+val myAbsTypingTable1 = fn : Variable -> TypeValue
+val myAbsTypingTable1 = fn : Variable -> TypeValue
+val myAbsTypingTable1 = fn : Variable -> TypeValue
 val it = NoDeclaration : TypeValue
+val it = DeclaredInt : TypeValue
 val var_bb = S "bb" : Variable
 val declaration_bb = (S "bb",TypeBool) : Variable * Type
 val myAbsTypingTable2 = fn : Variable -> TypeValue
+val myAbsTypingTable2 = fn : Variable -> TypeValue
+val myAbsTypingTable2 = fn : Variable -> TypeValue
+val myAbsTypingTable2 = fn : Variable -> TypeValue
+val myAbsTypingTable2 = fn : Variable -> TypeValue
+val myAbsTypingTable2 = fn : Variable -> TypeValue
+val it = NoDeclaration : TypeValue
 val it = DeclaredInt : TypeValue
-val it = DeclaredBool : TypeValue
 val it = NoDeclaration : TypeValue
 val wholeAbsTypingTable = fn : DeclarationList -> AbsTypingTable
 val myAbsTypingTable = fn : AbsTypingTable
@@ -195,7 +205,7 @@ datatype ValueInAbsProgState
   | ValueUnknown
 type AbsProgState = Variable -> ValueInAbsProgState
 val AbsProgStateUnknown = fn : Variable -> ValueInAbsProgState
-stdIn:383.16 Warning: calling polyEqual
+stdIn:393.16 Warning: calling polyEqual
 val NewAbsProgState = fn
   : Variable * ValueInAbsProgState
      -> AbsProgState -> Variable -> ValueInAbsProgState
