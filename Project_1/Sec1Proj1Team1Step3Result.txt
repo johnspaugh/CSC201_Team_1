@@ -190,6 +190,7 @@ val ItestGood_1 = true : bool
 val ItestGood_2 = true : bool
 val ItestGood_3 = true : bool
 val ItestGood_4 = true : bool
+val ItestGood_5 = true : bool
 val badInstruction = VE (S "n",BC true) : Instruction
 val ItestBad_1 = false : bool
 val ProgramVCheck = fn : DeclarationList * Instruction -> bool
@@ -205,7 +206,7 @@ datatype ValueInAbsProgState
   | ValueUnknown
 type AbsProgState = Variable -> ValueInAbsProgState
 val AbsProgStateUnknown = fn : Variable -> ValueInAbsProgState
-stdIn:393.16 Warning: calling polyEqual
+stdIn:394.16 Warning: calling polyEqual
 val NewAbsProgState = fn
   : Variable * ValueInAbsProgState
      -> AbsProgState -> Variable -> ValueInAbsProgState
