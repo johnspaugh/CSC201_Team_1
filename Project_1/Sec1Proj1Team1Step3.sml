@@ -360,7 +360,7 @@ type AbsProgState = Variable -> ValueInAbsProgState
 (* 3 AbsProgStateUnknown: Variable -> ValueInAbsProgState *)
 val AbsProgStateUnknown = (fn(x:Variable) =>  ValueUnknown) 
 
-(* 4 NewAbsProgState: Variable x ValueInAbsProgState*)
+(* 4 NewAbsProgState: Variable x ValueInAbsProgState -> AbsProgState -> Variable -> ValueInAbsProgState *)
 fun NewAbsProgState (a:Variable, b:ValueInAbsProgState) (oldaps:AbsProgState) (c:Variable) =
       if c = a then b else oldaps c
 
@@ -373,17 +373,21 @@ exception WrongExpression
 (* 9 ExpCalculation: ValueInAbsProgState x ValueInAbsProgState -> operator -> ValueInAbsProgState *)
 val ExpCalculation =
 	(fn(ValueInt v1, ValueInt v2) =>
-		(fn(AOp Plus)  => ValueInt (v1 + v2) 
-		   | (AOp Minus) => ValueInt (v1 - v2) 
-		   | (AOp Times) => ValueInt (v1 * v2) 
+		(fn(AOp Plus)  => ValueInt(v1 + v2) 
+		   | (AOp Minus) => ValueInt(v1 - v2) 
+		   | (AOp Times) => ValueInt(v1 * v2) 
            | (AOp Div)   => if v2 = 0 
                             then raise WrongDivision
                             else ValueInt(v1 div v2)  
            | (ROp Gt) => ValueBool(v1 > v2)    
 		   | (ROp Lt) => ValueBool(v1 < v2)    
+		   | (ROp Eq) => ValueBool(v1 = v2)    
+		   | (ROp Ne) => ValueBool(v1 <> v2)    
+		   | (ROp Ge) => ValueBool(v1 >= v2)    
+		   | (ROp Le) => ValueBool(v1 <= v2)      
            | (_) => raise WrongOpForValueInt
         ) 
-        
+      
         | (ValueBool v1, ValueBool v2) =>
 		(fn(BOp And) => ValueBool(v1 andalso v2) 
 		   | (BOp Or)  => ValueBool(v1 orelse v2)  
@@ -399,6 +403,5 @@ fun ExpressionValue (Var x) (aps:AbsProgState) = aps(x)
                     | ExpressionValue (BC x) (aps:AbsProgState) = ValueBool(x) 
                     | ExpressionValue (EEO (a,b,c)) (aps:AbsProgState) = 
                     ExpCalculation (ExpressionValue a aps, ExpressionValue b aps) (c)
-
 
 (*------------End step3 Dynamic sementics---------------*)
