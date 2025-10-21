@@ -207,4 +207,7 @@ val ExpCalculation = fn
   : ValueInAbsProgState * ValueInAbsProgState
      -> Operator -> ValueInAbsProgState
 val ExpressionValue = fn : Expression -> AbsProgState -> ValueInAbsProgState
+val MeaningInstruction = fn : Instruction -> AbsProgState -> AbsProgState
+exception InvalidProgram
+val MeaningProgram = fn : Program -> AbsProgState
 

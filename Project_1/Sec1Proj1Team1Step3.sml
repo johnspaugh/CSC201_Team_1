@@ -401,7 +401,33 @@ val ExpCalculation =
 fun ExpressionValue (Var x) (aps:AbsProgState) = aps(x) 
                     | ExpressionValue (IC x) (aps:AbsProgState) = ValueInt(x) 
                     | ExpressionValue (BC x) (aps:AbsProgState) = ValueBool(x) 
-                    | ExpressionValue (EEO (a,b,c)) (aps:AbsProgState) = 
+                    | ExpressionValue (EEO (a, b, c)) (aps:AbsProgState) = 
                     ExpCalculation (ExpressionValue a aps, ExpressionValue b aps) (c)
+
+(* 11 MeaningInstruction: Intruction -> AbsProgState (Old) -> AbsProgState (New) *)
+val rec MeaningInstruction = 
+    (fn(Skip) => (fn(aps:AbsProgState) => aps)
+        | (VE (a, b)) => (fn(aps:AbsProgState) => NewAbsProgState (a, ExpressionValue b aps) (aps))
+        | (IfThenElse (a, b, c)) => (fn(aps:AbsProgState) => if ExpressionValue a aps = ValueBool(true)
+                                                             then MeaningInstruction b aps
+                                                             else MeaningInstruction c aps)
+        | (WhileLoop (a, b)) => (fn(aps:AbsProgState) => if ExpressionValue a aps <> ValueBool(true)
+                                                         then aps
+                                                         else MeaningInstruction (WhileLoop (a, b))
+                                                                (MeaningInstruction b aps))
+        | Seq [] => (fn(aps:AbsProgState) => aps)
+        | Seq (InstListHead::InstListTail) => (fn(aps:AbsProgState) => MeaningInstruction (Seq InstListTail)
+                                                                        (MeaningInstruction InstListHead aps))
+    )
+    
+(* 12 Exception *)
+exception InvalidProgram
+
+(* 13 MeaningProgram: Program -> AbsProgState *)
+val MeaningProgram = 
+    (fn((a,b): Program) => if ProgramVCheck(a,b)
+                           then MeaningInstruction b AbsProgStateUnknown
+                           else raise InvalidProgram
+    )
 
 (*------------End step3 Dynamic sementics---------------*)
