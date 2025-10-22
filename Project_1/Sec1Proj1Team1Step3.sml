@@ -401,7 +401,29 @@ val myAbsProgState2 = NewAbsProgState(var2, value2)(myAbsProgState1)
 myAbsProgState2(var1)
 myAbsProgState2(var2)
 myAbsProgState2(each other vars)
-  *)
+*)
+
+val myAbsProgState1 = NewAbsProgState(var_n, ValueInt 15)(AbsProgStateUnknown);
+val myAbsProgState1 = NewAbsProgState(var_cur, ValueInt 16)(AbsProgStateUnknown);
+val myAbsProgState1 = NewAbsProgState(var_prev1, ValueInt 17)(AbsProgStateUnknown);
+val myAbsProgState1 = NewAbsProgState(var_prev2, ValueInt 18)(AbsProgStateUnknown);
+val myAbsProgState1 = NewAbsProgState(var_i, ValueInt 19)(AbsProgStateUnknown);
+val myAbsProgState1 = NewAbsProgState(var_answer, ValueInt 20)(AbsProgStateUnknown);
+val myAbsProgState1 = NewAbsProgState(var_temp, ValueInt 21)(AbsProgStateUnknown);
+myAbsProgState1(var_i);
+myAbsProgState1(var_temp);
+ 
+val myAbsProgState2 = NewAbsProgState(var_n, ValueInt 15)(myAbsProgState1)
+val myAbsProgState2 = NewAbsProgState(var_cur, ValueInt 16)(myAbsProgState1);
+val myAbsProgState2 = NewAbsProgState(var_prev1, ValueInt 17)(myAbsProgState1);
+val myAbsProgState2 = NewAbsProgState(var_prev2, ValueInt 18)(myAbsProgState1);
+val myAbsProgState2 = NewAbsProgState(var_i, ValueInt 19)(myAbsProgState1);
+val myAbsProgState2 = NewAbsProgState(var_answer, ValueInt 20)(myAbsProgState1);
+val myAbsProgState2 = NewAbsProgState(var_temp, ValueInt 21)(myAbsProgState1);
+myAbsProgState2(var_i);
+myAbsProgState2(var_temp);
+myAbsProgState2(var_answer);
+myAbsProgState2(var_bb); 
 
 (* 5-10  value/meaning of Expression *)
 
@@ -466,8 +488,7 @@ val ExpCalculation =
                (_) => raise WrongOpForValueBool 
           ) | 
           (_,_) => (fn(_) => raise WrongExpression)
-     )    
-     
+     )
 ;
 
 (* 10. ExpressionValue: Expression -> AbsProgState -> ValueInAbsProgState *)
@@ -483,14 +504,16 @@ fun ExpressionValue(EDC1(x))(aps:AbsProgState)=aps(x) |
      ExpressionValue(BC(x))(aps:AbsProgState)=ValueBool(x) |
      ExpressionValue(EEO(a,b,c))(aps:AbsProgState) =
           ExpCalculation(ExpressionValue(a)(aps),ExpressionValue(b)(aps))(c)
-
+;
 
  (* **** Testing 10, use a good AbsProgState
  6 good cases --3 base cases, 3 binary of 3 types of operators
  don't use word op - already is a keyword
  Arithmetic_op -- realistic
- more than a+b
- 1 bad case
+ more than a+b *)
+
+ 
+ (* **** Testing 10, 1 bad case
      raise WrongExpression  -- try to get either of them
      Not comment out bad cases with notes for the Professor,
      and then continue on with the rest of the work in sml,
@@ -522,6 +545,23 @@ val rec MeaningInstruction =
      )
 *) 
 
+val rec MeaningInstruction =
+     (fn(Skip) => (fn (aps:AbsProgState) => aps)
+          | (VE(a,b)) => (fn(aps:AbsProgState) =>
+               NewAbsProgState( a, ExpressionValue(b)(aps) )(aps) ) 
+          | (IfThenElse(a,b,c)) => (fn(aps:AbsProgState) =>
+               if ExpressionValue(a)(aps) = ValueBool(true)
+               then MeaningInstruction(b)(aps)
+               else MeaningInstruction(c)(aps) ) 
+          | (WhileLoop(a,b)) => (fn(aps:AbsProgState) =>
+               if ExpressionValue(a)(aps) <> ValueBool(true)
+               then aps
+               else MeaningInstruction(WhileLoop(a,b))(MeaningInstruction(b)(aps) )) 
+          | (Seq([])) => (fn(aps:AbsProgState) => aps) 
+          | (Seq(InstListHead::InstListTail)) => (fn(aps:AbsProgState) => 
+               MeaningInstruction(Seq(InstListTail))(MeaningInstruction(InstListHead)(aps) )) 
+     );
+
 (* ****Testing 11
 must use a good AbsProgState
 4 good cases
@@ -529,6 +569,7 @@ Check resulting AbsProgState
 *)
 
 (* 12 Exception: InVaildProgram *)
+exception InVaildProgram;
 
 (* 13 MeaningProgram: Program -> AbsProgState *)
 (*
@@ -539,6 +580,12 @@ val MeaningProgram =
           else raise InVaildProgram
      )
 *)
+val MeaningProgram =
+     (fn((a,b):Program) => 
+          if ProgramVCheck(a,b)
+          then MeaningInstruction(b)(AbsProgStateUnknown)
+          else raise InVaildProgram
+     );
 
 (* ***Testing 13
 one good case. all sample program ---
