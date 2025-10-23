@@ -511,15 +511,23 @@ fun ExpressionValue(EDC1(x))(aps:AbsProgState)=aps(x) |
  don't use word op - already is a keyword
  Arithmetic_op -- realistic
  more than a+b *)
+val test10_1 = ExpressionValue(nExpression);
+val test10_2 = ExpressionValue(iCExpression);
+val test10_3 = ExpressionValue(bCExpression);
+val test10_4_1 = ExpressionValue(add_i_1);
+val test10_4_2 = ExpressionValue(i_lessthan_n);
+val test10_4_3 = ExpressionValue(and_t_t);
 
- 
- (* **** Testing 10, 1 bad case
+(*  **** Testing 10, 1 bad case
      raise WrongExpression  -- try to get either of them
      Not comment out bad cases with notes for the Professor,
      and then continue on with the rest of the work in sml,
      otherwise will crash if not commented out, so don't 
      forget to comment out.
  *)
+val test10_5_1 = ExpressionValue(minus_5_6);
+val test10_5_2 = ExpressionValue(add_8_t);
+val test10_5_3 = ExpressionValue(minus_56_8t);
 
 (* 11 MeaningInstruction: Instruction -> AbsProgState -> AbsProgState
                                            (old) ------------  (new) *)
@@ -565,8 +573,12 @@ val rec MeaningInstruction =
 (* ****Testing 11
 must use a good AbsProgState
 4 good cases
-Check resulting AbsProgState
-*)
+Check resulting AbsProgState *)
+MeaningInstruction( cur_prev1_plus_prev2 );
+MeaningInstruction( ipp );
+MeaningInstruction( inner_ifThenElse );
+MeaningInstruction( whileLoop );
+MeaningInstruction( Seq inner_Else );
 
 (* 12 Exception: InVaildProgram *)
 exception InVaildProgram;
@@ -593,6 +605,7 @@ one good case. all sample program ---
 variable in Program get to AbsProgState
 no bad case, (not necessary )
 *)
+val LucusProgram = MeaningProgram(lucas);
 
 
 (*------------End step3 dynamic semantics----------------------*)
