@@ -189,7 +189,7 @@ val bad_program =
     (S "i",TypeInt),(S "answer",TypeInt)],VE (S "n",BC true))
   : (Variable * Type) list * Instruction
 val test11_bad1 = false : bool
-stdIn:365.12 Warning: calling polyEqual
+stdIn:366.12 Warning: calling polyEqual
 datatype ValueInAbsProgState
   = ValueBool of bool
   | ValueInt of int
@@ -201,6 +201,11 @@ val NewAbsProgState = fn
      -> AbsProgState -> Variable -> ValueInAbsProgState
 val MyAbsProgState1 = fn : Variable -> ValueInAbsProgState
 val it = ValueInt 15 : ValueInAbsProgState
+val it = ValueUnknown : ValueInAbsProgState
+val it = ValueUnknown : ValueInAbsProgState
+val it = ValueUnknown : ValueInAbsProgState
+val it = ValueUnknown : ValueInAbsProgState
+val it = ValueUnknown : ValueInAbsProgState
 val MyAbsProgState2 = fn : Variable -> ValueInAbsProgState
 val it = ValueInt 15 : ValueInAbsProgState
 val it = ValueInt 0 : ValueInAbsProgState
@@ -208,7 +213,59 @@ val it = ValueUnknown : ValueInAbsProgState
 val it = ValueUnknown : ValueInAbsProgState
 val it = ValueUnknown : ValueInAbsProgState
 val it = ValueUnknown : ValueInAbsProgState
+exception WrongDivision
+exception WrongOpForValueInt
+exception WrongOpForValueBool
+exception WrongExpression
+val ExpCalculation = fn
+  : ValueInAbsProgState * ValueInAbsProgState
+     -> Operator -> ValueInAbsProgState
+val ExpressionValue = fn : Expression -> AbsProgState -> ValueInAbsProgState
+val Good_BaseCase1 = ValueInt 15 : ValueInAbsProgState
+val Good_BaseCase2 = ValueInt 0 : ValueInAbsProgState
+val Good_BaseCase3 = ValueBool true : ValueInAbsProgState
+val Good_BinaryCase1 = ValueInt 2 : ValueInAbsProgState
+val Good_BinaryCase2 = ValueBool true : ValueInAbsProgState
+val Good_BinaryCase3 = ValueBool false : ValueInAbsProgState
+val Bad_WrongExpression = ValueUnknown : ValueInAbsProgState
+val MeaningInstruction = fn : Instruction -> AbsProgState -> AbsProgState
+val MyAbsProgStatePartial1 = fn : Variable -> ValueInAbsProgState
+val MyAbsProgStatePartial2 = fn : Variable -> ValueInAbsProgState
+val MyAbsProgStatePartial3 = fn : Variable -> ValueInAbsProgState
+val MyAbsProgStatePartial4 = fn : Variable -> ValueInAbsProgState
+val MyAbsProgStatePartial5 = fn : Variable -> ValueInAbsProgState
+val MyAbsProgStateFull = fn : Variable -> ValueInAbsProgState
+val MeaningInstructionTest_VE = fn : AbsProgState
+val MeaningInstructionTest_IfThenElse = fn : AbsProgState
+val MeaningInstructionTest_WhileLoop = fn : AbsProgState
+val MeaningInstructionTest_Seq = fn : AbsProgState
+val ResultProgStateVE_n = ValueInt 15 : ValueInAbsProgState
+val ResultProgStateIfThenElse_n = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateIfThenElse_cur = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateIfThenElse_prev1 = ValueInt 1 : ValueInAbsProgState
+val ResultProgStateIfThenElse_prev2 = ValueInt 2 : ValueInAbsProgState
+val ResultProgStateIfThenElse_i = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateIfThenElse_answer = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateWhile_n = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateWhile_cur = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateeWhile_prev1 = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateWhile_prev2 = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateWhile_i = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateWhile_answer = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateSeq_n = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateSeq_cur = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateSeq_prev1 = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateSeq_prev2 = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateSeq_i = ValueInt 1 : ValueInAbsProgState
+val ResultProgStateSeq_answer = ValueInt 0 : ValueInAbsProgState
+exception InvalidProgram
+val MeaningProgram = fn : Program -> AbsProgState
+val lucasResultProgState = fn : AbsProgState
+val ResultLucas_n = ValueInt 15 : ValueInAbsProgState
+val ResultLucas_var_cur = ValueInt 1364 : ValueInAbsProgState
+val ResultLucas_var_prev1 = ValueInt 1364 : ValueInAbsProgState
+val ResultLucas_var_prev2 = ValueInt 843 : ValueInAbsProgState
+val ResultLucas_var_i = ValueInt 15 : ValueInAbsProgState
+val ResultLucas_var_answer = ValueInt 1364 : ValueInAbsProgState
+val ResultLucas_var_temp = ValueUnknown : ValueInAbsProgState
 
-uncaught exception WrongExpression
-  raised at: stdIn:408.37-408.52
-- 

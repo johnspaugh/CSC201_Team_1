@@ -222,6 +222,7 @@ myAbsTypingTable2 var_n;
 myAbsTypingTable2 var_bb;
 myAbsTypingTable2 var_answer;
 
+
 (* 7 *)
 val rec wholeAbsTypingTable =
      (fn ((decListhead:: decListTail):DeclarationList)=>
@@ -367,13 +368,19 @@ fun NewAbsProgState (a:Variable, b:ValueInAbsProgState) (oldaps:AbsProgState) (c
 (* Testing 1-4 *)
 val MyAbsProgState1 = NewAbsProgState (var_n , ValueInt 15) AbsProgStateUnknown;
 MyAbsProgState1 var_n;
+MyAbsProgState1 var_cur;
+MyAbsProgState1 var_prev1;
+MyAbsProgState1 var_prev2;
+MyAbsProgState1 var_i;
+MyAbsProgState1 var_answer;
+
 val MyAbsProgState2 = NewAbsProgState (var_cur, ValueInt 0) MyAbsProgState1;
-MyAbsProgState2(var_n);
-MyAbsProgState2(var_cur);
-MyAbsProgState2(var_prev1);
-MyAbsProgState2(var_prev2);
-MyAbsProgState2(var_i);
-MyAbsProgState2(var_answer);
+MyAbsProgState2 var_n;
+MyAbsProgState2 var_cur;
+MyAbsProgState2 var_prev1;
+MyAbsProgState2 var_prev2;
+MyAbsProgState2 var_i;
+MyAbsProgState2 var_answer;
 
 (*** 5 - 8 Exceptions ***)
 exception WrongDivision
@@ -444,22 +451,22 @@ val rec MeaningInstruction =
     )
     
 (*** Testing 11 ***)
-(* Creating Full ProgState *)
-val MyAbsProgStatePartial1 = NewAbsProgState (var_n,      ValueInt 0) AbsProgStateUnknown;
-val MyAbsProgStatePartial2 = NewAbsProgState (var_cur,    ValueInt 0)  MyAbsProgStatePartial1;
-val MyAbsProgStatePartial3 = NewAbsProgState (var_prev1,  ValueInt 0)  MyAbsProgStatePartial2;
-val MyAbsProgStatePartial4 = NewAbsProgState (var_prev2,  ValueInt 0)  MyAbsProgStatePartial3;
-val MyAbsProgStatePartial5 = NewAbsProgState (var_i,      ValueInt 0)  MyAbsProgStatePartial4;
-val MyAbsProgStateFull     = NewAbsProgState (var_answer, ValueInt 0)  MyAbsProgStatePartial5;
+(* Creating Full Initial ProgState *)
+val MyAbsProgStatePartial1 = NewAbsProgState (var_n,      ValueInt 0)  AbsProgStateUnknown
+val MyAbsProgStatePartial2 = NewAbsProgState (var_cur,    ValueInt 0)  MyAbsProgStatePartial1
+val MyAbsProgStatePartial3 = NewAbsProgState (var_prev1,  ValueInt 0)  MyAbsProgStatePartial2
+val MyAbsProgStatePartial4 = NewAbsProgState (var_prev2,  ValueInt 0)  MyAbsProgStatePartial3
+val MyAbsProgStatePartial5 = NewAbsProgState (var_i,      ValueInt 0)  MyAbsProgStatePartial4
+val MyAbsProgStateFull     = NewAbsProgState (var_answer, ValueInt 0)  MyAbsProgStatePartial5
 
 (* 4 Good Cases *)
-val MeaningInstructionTest_VE = MeaningInstruction assign_n_15 MyAbsProgStateFull;
-val MeaningInstructionTest_IfThenElse = MeaningInstruction inner_ifThenElse MyAbsProgStateFull;
-val MeaningInstructionTest_WhileLoop = MeaningInstruction whileLoop MyAbsProgStateFull;
-val MeaningInstructionTest_Seq = MeaningInstruction (Seq insideWhile) MyAbsProgStateFull;
+val MeaningInstructionTest_VE = MeaningInstruction assign_n_15 MyAbsProgStateFull
+val MeaningInstructionTest_IfThenElse = MeaningInstruction inner_ifThenElse MyAbsProgStateFull
+val MeaningInstructionTest_WhileLoop = MeaningInstruction whileLoop MyAbsProgStateFull
+val MeaningInstructionTest_Seq = MeaningInstruction (Seq insideWhile) MyAbsProgStateFull
 
 (* ResultingProgState VE *)
-val ResultProgStateVE_n = MeaningInstructionTest_VE var_n;
+val ResultProgStateVE_n = MeaningInstructionTest_VE var_n
 
 (* ResultingProgState IfThenElse *)
 val ResultProgStateIfThenElse_n      = MeaningInstructionTest_IfThenElse var_n
@@ -496,14 +503,15 @@ val MeaningProgram =
     )
 
 
-(*** Testing Lucas ***)
+(*** Testing Program Lucas ***)
 val lucasResultProgState = MeaningProgram lucas;
-
+(* ResultingProgState Lucas *)
 val ResultLucas_n           = lucasResultProgState var_n
 val ResultLucas_var_cur     = lucasResultProgState var_cur
 val ResultLucas_var_prev1   = lucasResultProgState var_prev1
 val ResultLucas_var_prev2   = lucasResultProgState var_prev2
 val ResultLucas_var_i       = lucasResultProgState var_i
 val ResultLucas_var_answer  = lucasResultProgState var_answer
+val ResultLucas_var_temp    = lucasResultProgState var_temp
 
 (*------------End step3 Dynamic sementics---------------*)
