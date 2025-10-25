@@ -206,7 +206,7 @@ datatype ValueInAbsProgState
   | ValueUnknown
 type AbsProgState = Variable -> ValueInAbsProgState
 val AbsProgStateUnknown = fn : Variable -> ValueInAbsProgState
-stdIn:394.16 Warning: calling polyEqual
+stdIn:382.16 Warning: calling polyEqual
 val NewAbsProgState = fn
   : Variable * ValueInAbsProgState
      -> AbsProgState -> Variable -> ValueInAbsProgState
@@ -248,7 +248,7 @@ val test10_5_1 = fn : AbsProgState -> ValueInAbsProgState
 val test10_5_2 = fn : AbsProgState -> ValueInAbsProgState
 val test10_5_3 = fn : AbsProgState -> ValueInAbsProgState
 val MeaningInstruction = fn : Instruction -> AbsProgState -> AbsProgState
-val it = fn : AbsProgState -> AbsProgState
+val gtest11_1 = fn : AbsProgState -> AbsProgState
 val it = fn : AbsProgState -> AbsProgState
 val it = fn : AbsProgState -> AbsProgState
 val it = fn : AbsProgState -> AbsProgState
@@ -256,4 +256,4 @@ val it = fn : AbsProgState -> AbsProgState
 exception InVaildProgram
 val MeaningProgram = fn : Program -> AbsProgState
 val LucusProgram = fn : AbsProgState
-
+- 
