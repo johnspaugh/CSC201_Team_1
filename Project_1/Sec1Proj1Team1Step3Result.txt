@@ -199,15 +199,16 @@ val AbsProgStateUnknown = fn : Variable -> ValueInAbsProgState
 val NewAbsProgState = fn
   : Variable * ValueInAbsProgState
      -> AbsProgState -> Variable -> ValueInAbsProgState
-exception WrongDivision
-exception WrongOpForValueInt
-exception WrongOpForValueBool
-exception WrongExpression
-val ExpCalculation = fn
-  : ValueInAbsProgState * ValueInAbsProgState
-     -> Operator -> ValueInAbsProgState
-val ExpressionValue = fn : Expression -> AbsProgState -> ValueInAbsProgState
-val MeaningInstruction = fn : Instruction -> AbsProgState -> AbsProgState
-exception InvalidProgram
-val MeaningProgram = fn : Program -> AbsProgState
+val MyAbsProgState1 = fn : Variable -> ValueInAbsProgState
+val it = ValueInt 15 : ValueInAbsProgState
+val MyAbsProgState2 = fn : Variable -> ValueInAbsProgState
+val it = ValueInt 15 : ValueInAbsProgState
+val it = ValueInt 0 : ValueInAbsProgState
+val it = ValueUnknown : ValueInAbsProgState
+val it = ValueUnknown : ValueInAbsProgState
+val it = ValueUnknown : ValueInAbsProgState
+val it = ValueUnknown : ValueInAbsProgState
 
+uncaught exception WrongExpression
+  raised at: stdIn:408.37-408.52
+- 
