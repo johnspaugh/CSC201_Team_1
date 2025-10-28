@@ -169,9 +169,11 @@ int main(){ //int argc, char *argv[]){
 (*------------step2 static semantics---------------*)
 (* sml<Sec1Proj1Team1Step2.ml>Sec1Proj1Team1Step2Result.txt   *)
 
+(* 1 NoDuplicate: DeclarationList -> variable -> bool *)
 fun NoDuplicate((a: Variable, b: Type):: decListTail)(c: Variable) = (a <> c) andalso NoDuplicate decListTail c
   | NoDuplicate [] c = true;
 
+(* 2 DecListVCheck: DeclarationList: DeclarationList -> bool *)
 val rec DecListVCheck =
      (fn ( ((a: Variable, b: Type):: decListTail):DeclarationList) =>
           DecListVCheck(decListTail) andalso
@@ -179,13 +181,12 @@ val rec DecListVCheck =
           ([]) => true  
      ) ;
 
-(*Good testing step 2, input allDeclarations list with int into DecListVCheck
-Gtest1 expected true*)
-
+(* Good testing step 2, input allDeclarations list with int into DecListVCheck
+Gtest1 expected true *)
 val Gtest1 = DecListVCheck(allDeclarations);
 
 (* Bad testing step 2, New List using allDeclarations adding on a duplicate n to the head
-Btest1 expected false*)
+Btest1 expected false *)
 val declarationslist_bad = declaration_n :: allDeclarations;
 val Btest1 = DecListVCheck(declarationslist_bad);
 
@@ -197,10 +198,10 @@ datatype TypeValue = NoDeclaration | DeclaredInt | DeclaredBool ;
 (* 4 *)
 type AbsTypingTable = Variable -> TypeValue 
 
-(* 5 *)
+(* 5 AbsTypingTableNoDeclaration: variable -> NoDeclaration *)
 val AbsTypingTableNoDeclaration = (fn (x:Variable) => NoDeclaration)    
 
-(* 6 *)             
+(* 6 NewAbsTypingTable: AbsTypingTable (old) -> Declaration -> AbsTypingTable (new) *)             
 fun NewAbsTypingTable(oldatt: AbsTypingTable)(a:Variable, TypeBool)
      =(fn (b:Variable)=> if b = a then DeclaredBool
                                    else oldatt(b)) |
@@ -212,6 +213,10 @@ fun NewAbsTypingTable(oldatt: AbsTypingTable)(a:Variable, TypeBool)
 Had to add var bb to test for boolean since allDeclarations has none*)
 val myAbsTypingTable1 = NewAbsTypingTable(AbsTypingTableNoDeclaration)(declaration_n);
 myAbsTypingTable1 var_n;
+myAbsTypingTable1 var_cur;
+myAbsTypingTable1 var_prev1;
+myAbsTypingTable1 var_prev2;
+myAbsTypingTable1 var_i;
 myAbsTypingTable1 var_answer;
 
 val var_bb  = S "bb";
@@ -219,9 +224,12 @@ val declaration_bb      = (var_bb, TypeBool);
 
 val myAbsTypingTable2 = NewAbsTypingTable(myAbsTypingTable1)(declaration_bb);
 myAbsTypingTable2 var_n;
-myAbsTypingTable2 var_bb;
+myAbsTypingTable2 var_cur;
+myAbsTypingTable2 var_prev1;
+myAbsTypingTable2 var_prev2;
+myAbsTypingTable2 var_i;
 myAbsTypingTable2 var_answer;
-
+myAbsTypingTable2 var_bb;
 
 (* 7 *)
 val rec wholeAbsTypingTable =
@@ -324,14 +332,14 @@ val rec InstructionVCheck =
 (* ****testing part 10, 4-good cases **** *)
 val ItestGood_1 = InstructionVCheck myAbsTypingTable cur_prev1_plus_prev2
 val ItestGood_2 = InstructionVCheck myAbsTypingTable inner_ifThenElse
-val ItestGood_3 = InstructionVCheck myAbsTypingTable ipp
+val ItestGood_3 = InstructionVCheck myAbsTypingTable whileLoop
 val ItestGood_4 = InstructionVCheck myAbsTypingTable (Seq inner_Else)
 
 (* ****testing part 10, 1-bad case**** *)
 val badInstruction   = VE (var_n, BC true)  
 val ItestBad_1 = InstructionVCheck myAbsTypingTable badInstruction
 
-(* 11. checkvalidity fn Program*)
+(* 11 ProgramVCheck *)
 fun ProgramVCheck(a,b) =
      DecListVCheck(a) andalso
      InstructionVCheck(wholeAbsTypingTable(a))(b);
@@ -427,10 +435,12 @@ fun ExpressionValue (Var x) (aps:AbsProgState) = aps(x)
 val Good_BaseCase1 = ExpressionValue (Var var_n) MyAbsProgState2;
 val Good_BaseCase2 = ExpressionValue (IC 0) MyAbsProgState2;
 val Good_BaseCase3 = ExpressionValue (BC true) MyAbsProgState2;
+
 (* Good Binary Cases *)
 val Good_BinaryCase1 = ExpCalculation (ValueInt 2, ValueInt 1) (AOp Div);     
 val Good_BinaryCase2 = ExpCalculation (ValueInt 2, ValueInt 1) (ROp Ge);
 val Good_BinaryCase3 = ExpCalculation (ValueBool true, ValueBool false) (BOp And);
+
 (* BAD Case *)
 (*val Bad_WrongExpression = ExpCalculation (ValueInt 0, ValueBool true) (AOp Plus);*)
 
@@ -466,12 +476,12 @@ val MeaningInstructionTest_WhileLoop = MeaningInstruction whileLoop MyAbsProgSta
 val MeaningInstructionTest_Seq = MeaningInstruction (Seq insideWhile) MyAbsProgStateFull
 
 (* ResultingProgState VE *)
-val ResultProgStateVE_n = MeaningInstructionTest_VE var_n
-val ResultProgStateVE_n = MeaningInstructionTest_VE var_cur
-val ResultProgStateVE_n = MeaningInstructionTest_VE var_prev1
-val ResultProgStateVE_n = MeaningInstructionTest_VE var_prev2
-val ResultProgStateVE_n = MeaningInstructionTest_VE var_i
-val ResultProgStateVE_n = MeaningInstructionTest_VE var_answer
+val ResultProgStateVE_n      = MeaningInstructionTest_VE var_n
+val ResultProgStateVE_cur    = MeaningInstructionTest_VE var_cur
+val ResultProgStateVE_prev1  = MeaningInstructionTest_VE var_prev1
+val ResultProgStateVE_prev2  = MeaningInstructionTest_VE var_prev2
+val ResultProgStateVE_i      = MeaningInstructionTest_VE var_i
+val ResultProgStateVE_answer = MeaningInstructionTest_VE var_answer
 
 (* ResultingProgState IfThenElse *)
 val ResultProgStateIfThenElse_n      = MeaningInstructionTest_IfThenElse var_n
