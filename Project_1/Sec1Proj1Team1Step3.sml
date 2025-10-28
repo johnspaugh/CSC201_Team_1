@@ -432,7 +432,7 @@ val Good_BinaryCase1 = ExpCalculation (ValueInt 2, ValueInt 1) (AOp Div);
 val Good_BinaryCase2 = ExpCalculation (ValueInt 2, ValueInt 1) (ROp Ge);
 val Good_BinaryCase3 = ExpCalculation (ValueBool true, ValueBool false) (BOp And);
 (* BAD Case *)
-val Bad_WrongExpression = ((ExpCalculation (ValueInt 0, ValueBool true) (AOp Plus)) handle WrongExpression => ValueUnknown);
+(*val Bad_WrongExpression = ExpCalculation (ValueInt 0, ValueBool true) (AOp Plus);*)
 
 (* 11 MeaningInstruction: Intruction -> AbsProgState (Old) -> AbsProgState (New) *)
 val rec MeaningInstruction = 
@@ -466,7 +466,12 @@ val MeaningInstructionTest_WhileLoop = MeaningInstruction whileLoop MyAbsProgSta
 val MeaningInstructionTest_Seq = MeaningInstruction (Seq insideWhile) MyAbsProgStateFull
 
 (* ResultingProgState VE *)
-val ResultProgStateVE_n = MeaningInstructionTest_VE var_n
+val ResultProgStateVE_n      = MeaningInstructionTest_VE var_n
+val ResultProgStateVE_cur    = MeaningInstructionTest_VE var_cur
+val ResultProgStateVE_prev1  = MeaningInstructionTest_VE var_prev1
+val ResultProgStateVE_prev2  = MeaningInstructionTest_VE var_prev2
+val ResultProgStateVE_i      = MeaningInstructionTest_VE var_i
+val ResultProgStateVE_answer = MeaningInstructionTest_VE var_answer
 
 (* ResultingProgState IfThenElse *)
 val ResultProgStateIfThenElse_n      = MeaningInstructionTest_IfThenElse var_n
@@ -501,7 +506,6 @@ val MeaningProgram =
                            then MeaningInstruction b AbsProgStateUnknown
                            else raise InvalidProgram
     )
-
 
 (*** Testing Program Lucas ***)
 val lucasResultProgState = MeaningProgram lucas;
