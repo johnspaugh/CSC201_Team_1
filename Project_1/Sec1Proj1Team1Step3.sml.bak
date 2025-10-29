@@ -339,7 +339,7 @@ val ItestGood_4 = InstructionVCheck myAbsTypingTable (Seq inner_Else)
 val badInstruction   = VE (var_n, BC true)  
 val ItestBad_1 = InstructionVCheck myAbsTypingTable badInstruction
 
-(* 11 ProgramVCheck: Program -> Bool *)
+(* 11 ProgramVCheck *)
 fun ProgramVCheck(a,b) =
      DecListVCheck(a) andalso
      InstructionVCheck(wholeAbsTypingTable(a))(b);

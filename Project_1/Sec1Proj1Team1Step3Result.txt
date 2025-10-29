@@ -24,7 +24,7 @@ datatype Type = TypeBool | TypeInt
 type Declaration = Variable * Type
 type DeclarationList = Declaration list
 type Program = DeclarationList * Instruction
-stdIn:172.73-172.75 Warning: calling polyEqual
+stdIn:173.73-173.75 Warning: calling polyEqual
 val var_n = S "n" : Variable
 val var_cur = S "cur" : Variable
 val var_prev1 = S "prev1" : Variable
@@ -133,8 +133,8 @@ val declarationslist_bad =
   : (Variable * Type) list
 val Btest1 = false : bool
 datatype TypeValue = DeclaredBool | DeclaredInt | NoDeclaration
-stdIn:205.31 Warning: calling polyEqual
-stdIn:208.30 Warning: calling polyEqual
+stdIn:206.31 Warning: calling polyEqual
+stdIn:209.30 Warning: calling polyEqual
 type AbsTypingTable = Variable -> TypeValue
 val AbsTypingTableNoDeclaration = fn : Variable -> TypeValue
 val NewAbsTypingTable = fn
@@ -142,12 +142,20 @@ val NewAbsTypingTable = fn
 val myAbsTypingTable1 = fn : Variable -> TypeValue
 val it = DeclaredInt : TypeValue
 val it = NoDeclaration : TypeValue
+val it = NoDeclaration : TypeValue
+val it = NoDeclaration : TypeValue
+val it = NoDeclaration : TypeValue
+val it = NoDeclaration : TypeValue
 val var_bb = S "bb" : Variable
 val declaration_bb = (S "bb",TypeBool) : Variable * Type
 val myAbsTypingTable2 = fn : Variable -> TypeValue
 val it = DeclaredInt : TypeValue
-val it = DeclaredBool : TypeValue
 val it = NoDeclaration : TypeValue
+val it = NoDeclaration : TypeValue
+val it = NoDeclaration : TypeValue
+val it = NoDeclaration : TypeValue
+val it = NoDeclaration : TypeValue
+val it = DeclaredBool : TypeValue
 val wholeAbsTypingTable = fn : DeclarationList -> AbsTypingTable
 val myAbsTypingTable = fn : AbsTypingTable
 val it = DeclaredInt : TypeValue
@@ -189,4 +197,87 @@ val bad_program =
     (S "i",TypeInt),(S "answer",TypeInt)],VE (S "n",BC true))
   : (Variable * Type) list * Instruction
 val test11_bad1 = false : bool
+stdIn:374.12 Warning: calling polyEqual
+datatype ValueInAbsProgState
+  = ValueBool of bool
+  | ValueInt of int
+  | ValueUnknown
+type AbsProgState = Variable -> ValueInAbsProgState
+val AbsProgStateUnknown = fn : Variable -> ValueInAbsProgState
+val NewAbsProgState = fn
+  : Variable * ValueInAbsProgState
+     -> AbsProgState -> Variable -> ValueInAbsProgState
+val MyAbsProgState1 = fn : Variable -> ValueInAbsProgState
+val it = ValueInt 15 : ValueInAbsProgState
+val it = ValueUnknown : ValueInAbsProgState
+val it = ValueUnknown : ValueInAbsProgState
+val it = ValueUnknown : ValueInAbsProgState
+val it = ValueUnknown : ValueInAbsProgState
+val it = ValueUnknown : ValueInAbsProgState
+val MyAbsProgState2 = fn : Variable -> ValueInAbsProgState
+val it = ValueInt 15 : ValueInAbsProgState
+val it = ValueInt 0 : ValueInAbsProgState
+val it = ValueUnknown : ValueInAbsProgState
+val it = ValueUnknown : ValueInAbsProgState
+val it = ValueUnknown : ValueInAbsProgState
+val it = ValueUnknown : ValueInAbsProgState
+exception WrongDivision
+exception WrongOpForValueInt
+exception WrongOpForValueBool
+exception WrongExpression
+val ExpCalculation = fn
+  : ValueInAbsProgState * ValueInAbsProgState
+     -> Operator -> ValueInAbsProgState
+val ExpressionValue = fn : Expression -> AbsProgState -> ValueInAbsProgState
+val Good_BaseCase1 = ValueInt 15 : ValueInAbsProgState
+val Good_BaseCase2 = ValueInt 0 : ValueInAbsProgState
+val Good_BaseCase3 = ValueBool true : ValueInAbsProgState
+val Good_BinaryCase1 = ValueInt 2 : ValueInAbsProgState
+val Good_BinaryCase2 = ValueBool true : ValueInAbsProgState
+val Good_BinaryCase3 = ValueBool false : ValueInAbsProgState
+val MeaningInstruction = fn : Instruction -> AbsProgState -> AbsProgState
+val MyAbsProgStatePartial1 = fn : Variable -> ValueInAbsProgState
+val MyAbsProgStatePartial2 = fn : Variable -> ValueInAbsProgState
+val MyAbsProgStatePartial3 = fn : Variable -> ValueInAbsProgState
+val MyAbsProgStatePartial4 = fn : Variable -> ValueInAbsProgState
+val MyAbsProgStatePartial5 = fn : Variable -> ValueInAbsProgState
+val MyAbsProgStateFull = fn : Variable -> ValueInAbsProgState
+val MeaningInstructionTest_VE = fn : AbsProgState
+val MeaningInstructionTest_IfThenElse = fn : AbsProgState
+val MeaningInstructionTest_WhileLoop = fn : AbsProgState
+val MeaningInstructionTest_Seq = fn : AbsProgState
+val ResultProgStateVE_n = ValueInt 15 : ValueInAbsProgState
+val ResultProgStateVE_cur = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateVE_prev1 = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateVE_prev2 = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateVE_i = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateVE_answer = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateIfThenElse_n = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateIfThenElse_cur = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateIfThenElse_prev1 = ValueInt 1 : ValueInAbsProgState
+val ResultProgStateIfThenElse_prev2 = ValueInt 2 : ValueInAbsProgState
+val ResultProgStateIfThenElse_i = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateIfThenElse_answer = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateWhile_n = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateWhile_cur = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateeWhile_prev1 = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateWhile_prev2 = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateWhile_i = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateWhile_answer = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateSeq_n = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateSeq_cur = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateSeq_prev1 = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateSeq_prev2 = ValueInt 0 : ValueInAbsProgState
+val ResultProgStateSeq_i = ValueInt 1 : ValueInAbsProgState
+val ResultProgStateSeq_answer = ValueInt 0 : ValueInAbsProgState
+exception InvalidProgram
+val MeaningProgram = fn : Program -> AbsProgState
+val lucasResultProgState = fn : AbsProgState
+val ResultLucas_n = ValueInt 15 : ValueInAbsProgState
+val ResultLucas_var_cur = ValueInt 1364 : ValueInAbsProgState
+val ResultLucas_var_prev1 = ValueInt 1364 : ValueInAbsProgState
+val ResultLucas_var_prev2 = ValueInt 843 : ValueInAbsProgState
+val ResultLucas_var_i = ValueInt 15 : ValueInAbsProgState
+val ResultLucas_var_answer = ValueInt 1364 : ValueInAbsProgState
+val ResultLucas_var_temp = ValueUnknown : ValueInAbsProgState
 
