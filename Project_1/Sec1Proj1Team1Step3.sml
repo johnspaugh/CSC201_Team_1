@@ -392,27 +392,21 @@ myAbsProgState2(var2)
 myAbsProgState2(each other vars)
 *)
 
-val myAbsProgState1 = NewAbsProgState(var_n, ValueInt 15)(AbsProgStateUnknown);
-val myAbsProgState1 = NewAbsProgState(var_cur, ValueInt 16)(AbsProgStateUnknown);
-val myAbsProgState1 = NewAbsProgState(var_prev1, ValueInt 17)(AbsProgStateUnknown);
-val myAbsProgState1 = NewAbsProgState(var_prev2, ValueInt 18)(AbsProgStateUnknown);
-val myAbsProgState1 = NewAbsProgState(var_i, ValueInt 19)(AbsProgStateUnknown);
-val myAbsProgState1 = NewAbsProgState(var_answer, ValueInt 20)(AbsProgStateUnknown);
-val myAbsProgState1 = NewAbsProgState(var_temp, ValueInt 21)(AbsProgStateUnknown);
-myAbsProgState1(var_i);
-myAbsProgState1(var_temp);
- 
-val myAbsProgState2 = NewAbsProgState(var_n, ValueInt 15)(myAbsProgState1)
-val myAbsProgState2 = NewAbsProgState(var_cur, ValueInt 16)(myAbsProgState1);
-val myAbsProgState2 = NewAbsProgState(var_prev1, ValueInt 17)(myAbsProgState1);
-val myAbsProgState2 = NewAbsProgState(var_prev2, ValueInt 18)(myAbsProgState1);
-val myAbsProgState2 = NewAbsProgState(var_i, ValueInt 19)(myAbsProgState1);
-val myAbsProgState2 = NewAbsProgState(var_answer, ValueInt 20)(myAbsProgState1);
-val myAbsProgState2 = NewAbsProgState(var_temp, ValueInt 21)(myAbsProgState1);
-myAbsProgState2(var_i);
-myAbsProgState2(var_temp);
-myAbsProgState2(var_answer);
-myAbsProgState2(var_bb); 
+val MyAbsProgState1 = NewAbsProgState (var_n , ValueInt 15) AbsProgStateUnknown;
+MyAbsProgState1 var_n;
+MyAbsProgState1 var_cur;
+MyAbsProgState1 var_prev1;
+MyAbsProgState1 var_prev2;
+MyAbsProgState1 var_i;
+MyAbsProgState1 var_answer;
+
+val MyAbsProgState2 = NewAbsProgState (var_cur, ValueInt 0) MyAbsProgState1;
+MyAbsProgState2 var_n;
+MyAbsProgState2 var_cur;
+MyAbsProgState2 var_prev1;
+MyAbsProgState2 var_prev2;
+MyAbsProgState2 var_i;
+MyAbsProgState2 var_answer;
 
 (* 5-10  value/meaning of Expression *)
 
@@ -517,6 +511,54 @@ MeaningInstruction( inner_ifThenElse );
 MeaningInstruction( whileLoop );
 MeaningInstruction( Seq inner_Else );
 
+(*From other students test cases from the team group *)
+(* Creating Full Initial ProgState *)
+val MyAbsProgStatePartial1 = NewAbsProgState (var_n,      ValueInt 0)  AbsProgStateUnknown
+val MyAbsProgStatePartial2 = NewAbsProgState (var_cur,    ValueInt 0)  MyAbsProgStatePartial1
+val MyAbsProgStatePartial3 = NewAbsProgState (var_prev1,  ValueInt 0)  MyAbsProgStatePartial2
+val MyAbsProgStatePartial4 = NewAbsProgState (var_prev2,  ValueInt 0)  MyAbsProgStatePartial3
+val MyAbsProgStatePartial5 = NewAbsProgState (var_i,      ValueInt 0)  MyAbsProgStatePartial4
+val MyAbsProgStateFull     = NewAbsProgState (var_answer, ValueInt 0)  MyAbsProgStatePartial5
+
+(* 4 Good Cases *)
+val MeaningInstructionTest_VE = MeaningInstruction assign_n_15 MyAbsProgStateFull
+val MeaningInstructionTest_IfThenElse = MeaningInstruction inner_ifThenElse MyAbsProgStateFull
+val MeaningInstructionTest_WhileLoop = MeaningInstruction whileLoop MyAbsProgStateFull
+val MeaningInstructionTest_Seq = MeaningInstruction (Seq insideWhile) MyAbsProgStateFull
+
+(* ResultingProgState VE *)
+val ResultProgStateVE_n      = MeaningInstructionTest_VE var_n
+val ResultProgStateVE_cur    = MeaningInstructionTest_VE var_cur
+val ResultProgStateVE_prev1  = MeaningInstructionTest_VE var_prev1
+val ResultProgStateVE_prev2  = MeaningInstructionTest_VE var_prev2
+val ResultProgStateVE_i      = MeaningInstructionTest_VE var_i
+val ResultProgStateVE_answer = MeaningInstructionTest_VE var_answer
+
+(* ResultingProgState IfThenElse *)
+val ResultProgStateIfThenElse_n      = MeaningInstructionTest_IfThenElse var_n
+val ResultProgStateIfThenElse_cur    = MeaningInstructionTest_IfThenElse var_cur
+val ResultProgStateIfThenElse_prev1  = MeaningInstructionTest_IfThenElse var_prev1
+val ResultProgStateIfThenElse_prev2  = MeaningInstructionTest_IfThenElse var_prev2
+val ResultProgStateIfThenElse_i      = MeaningInstructionTest_IfThenElse var_i
+val ResultProgStateIfThenElse_answer = MeaningInstructionTest_IfThenElse var_answer
+
+(* ResultingProgState While *)
+val ResultProgStateWhile_n      = MeaningInstructionTest_WhileLoop var_n
+val ResultProgStateWhile_cur    = MeaningInstructionTest_WhileLoop var_cur
+val ResultProgStateeWhile_prev1 = MeaningInstructionTest_WhileLoop var_prev1
+val ResultProgStateWhile_prev2  = MeaningInstructionTest_WhileLoop var_prev2
+val ResultProgStateWhile_i      = MeaningInstructionTest_WhileLoop var_i
+val ResultProgStateWhile_answer = MeaningInstructionTest_WhileLoop var_answer
+
+(* ResultingProgState Seq *)
+val ResultProgStateSeq_n      = MeaningInstructionTest_Seq var_n
+val ResultProgStateSeq_cur    = MeaningInstructionTest_Seq var_cur
+val ResultProgStateSeq_prev1  = MeaningInstructionTest_Seq var_prev1
+val ResultProgStateSeq_prev2  = MeaningInstructionTest_Seq var_prev2
+val ResultProgStateSeq_i      = MeaningInstructionTest_Seq var_i
+val ResultProgStateSeq_answer = MeaningInstructionTest_Seq var_answer
+
+
 (* 12 Exception: InVaildProgram *)
 exception InVaildProgram;
 
@@ -535,7 +577,15 @@ one good case. all sample program ---
 variable in Program get to AbsProgState
 no bad case, (not necessary )
 *)
-val LucusProgram = MeaningProgram(lucas);
+val lucasResultProgState = MeaningProgram(lucas);
 
+(* ResultingProgState Lucas *)
+val ResultLucas_n           = lucasResultProgState var_n
+val ResultLucas_var_cur     = lucasResultProgState var_cur
+val ResultLucas_var_prev1   = lucasResultProgState var_prev1
+val ResultLucas_var_prev2   = lucasResultProgState var_prev2
+val ResultLucas_var_i       = lucasResultProgState var_i
+val ResultLucas_var_answer  = lucasResultProgState var_answer
+val ResultLucas_var_temp    = lucasResultProgState var_temp
 
 (*------------End step3 dynamic semantics----------------------*)
